@@ -242,7 +242,7 @@ Then remove the entry from `~/.config/omarchy/shell.json`.
 
 ## Author
 
-Hari Vargas — [@haripako](https://twitter.com/haripako)
+Haripako — [@haripako](https://twitter.com/haripako)
 
 ## License
 

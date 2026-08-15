@@ -3,7 +3,7 @@
   "id": "io.github.haripako.omamusic",
   "name": "Omamusic",
   "version": "1.0.0",
-  "author": "Hari Vargas",
+  "author": "Haripako",
   "license": "MIT",
   "description": "YouTube Music MPRIS controller with album art, seekable progress bar, shuffle/repeat, and volume in a popup panel",
   "homepage": "https://github.com/haripako/omamusic",
