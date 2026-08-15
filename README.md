@@ -240,6 +240,10 @@ omarchy plugin remove io.github.haripako.omamusic
 
 Then remove the entry from `~/.config/omarchy/shell.json`.
 
+## Author
+
+Hari Vargas — [@haripako](https://twitter.com/haripako)
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
