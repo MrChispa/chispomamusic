@@ -1,5 +1,7 @@
 # Omamusic
 
+![preview](preview.png)
+
 Bar widget + popup panel for **YouTube Music** via MPRIS
 (`Quickshell.Services.Mpris`), for the Omarchy bar.
 
@@ -47,8 +49,10 @@ YouTube videos leave album empty — which is what *Strict browser match*
 (on by default) enforces. It is a good signal, not a guarantee: another site
 that reports a full artist/album pair can be picked up too.
 
-If you only ever use a native client, turn **Browser fallback** off and the
-guessing stops entirely.
+If you only ever use a native client, set **Player source** to `Native app`
+and the guessing stops entirely. Setting it to `Browser` does the opposite:
+browser sessions only, and the play button always opens `music.youtube.com`
+rather than launching an app.
 
 When a browser session is being controlled, the panel shows `via <browser>`
 under the track so it is never ambiguous which session you are driving.
@@ -111,6 +115,25 @@ Suggested global keybinding (`~/.config/hypr/bindings.lua`):
 o.bind("SUPER + M", "Toggle Omamusic", "omarchy-shell io.github.haripako.omamusic toggle")
 ```
 
+## Choosing a source
+
+Both routes speak MPRIS — a browser publishes a session exactly like a native
+client does. What differs is how much of the interface each one implements:
+
+| | Native app | Browser |
+|---|---|---|
+| Play/pause, next, previous | yes | yes |
+| Track, artist, album, artwork | yes | yes |
+| Seeking | yes | usually |
+| Volume | yes (MPRIS) | yes, via its PipeWire stream |
+| Shuffle / repeat | yes | no — the browser does not expose them |
+| Needs an install | yes | no |
+
+Browsers leave volume out of their MPRIS session, so the volume slider drives
+the player's PipeWire playback stream instead — the same knob a mixer moves.
+That stream only exists while audio is flowing, so the slider appears with
+playback rather than being permanently visible.
+
 ## Settings
 
 Configurable from the widget's settings in Omarchy, or directly in the
@@ -118,7 +141,7 @@ widget's entry in `~/.config/omarchy/shell.json`:
 
 | Setting | Default | What it does |
 |---------|---------|--------------|
-| `browserFallback` | `true` | Control music.youtube.com playing in a browser |
+| `playerSource` | `Auto` | `Auto`, `Native app` or `Browser` — where playback is controlled |
 | `strictBrowserMatch` | `true` | Only adopt a browser session reporting artist **and** album |
 | `extraPlayerNames` | `""` | Comma-separated MPRIS identities/desktop entries to also treat as YouTube Music |
 | `showVolume` | `true` | Show the volume slider when supported |
@@ -131,8 +154,9 @@ widget's entry in `~/.config/omarchy/shell.json`:
 - **Seeking** requires the player to support it. Native clients do; browsers
   usually report position but not always seek — the progress bar dims when
   seeking is unavailable.
-- **Volume** only appears when the player exposes MPRIS volume. Browsers
-  generally do not, native clients do.
+- **Volume** uses MPRIS when the player implements it and the player's
+  PipeWire stream otherwise. The stream route moves the whole application's
+  output, so with a browser it also affects other tabs making sound.
 - **Shuffle / repeat** buttons only appear when the player advertises support,
   so browser sessions typically show neither.
 - **Likes / thumbs up** are not exposed over MPRIS and are therefore not

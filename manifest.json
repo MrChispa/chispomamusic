@@ -18,7 +18,7 @@
     "allowMultiple": false,
     "defaultSection": "center",
     "defaults": {
-      "browserFallback": true,
+      "playerSource": "Auto",
       "strictBrowserMatch": true,
       "extraPlayerNames": "",
       "showVolume": true,
@@ -28,11 +28,12 @@
     },
     "schema": [
       {
-        "key": "browserFallback",
-        "type": "boolean",
-        "label": "Browser fallback",
-        "description": "Also control music.youtube.com playing in a browser tab or PWA",
-        "defaultValue": true
+        "key": "playerSource",
+        "type": "enum",
+        "label": "Player source",
+        "options": ["Auto", "Native app", "Browser"],
+        "defaultValue": "Auto",
+        "description": "Where playback is controlled. Auto prefers a native client and falls back to the browser. Native app gives volume, shuffle and repeat; Browser needs no install and uses its PipeWire stream for volume."
       },
       {
         "key": "strictBrowserMatch",

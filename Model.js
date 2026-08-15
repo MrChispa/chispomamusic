@@ -99,14 +99,25 @@ function preferPlaying(candidates) {
   return candidates[0]
 }
 
+// Both routes below speak MPRIS — the browser exposes a session just like a
+// native client does. What differs is how much of the interface each one
+// implements, which is why the choice is about *source*, not protocol.
+// Accepts the manifest's enum labels as well as bare keywords.
+function normalizeSource(value) {
+  var source = norm(value)
+  if (source.indexOf("native") !== -1) return "native"
+  if (source.indexOf("browser") !== -1) return "browser"
+  return "auto"
+}
+
 // `players` is Mpris.players.values. `options` accepts:
-//   browserFallback (bool), strictBrowserMatch (bool), extraPlayerNames (string)
+//   playerSource (string), strictBrowserMatch (bool), extraPlayerNames (string)
 function selectPlayer(players, options) {
   if (!players || players.length === 0) return null
   var opts = options || {}
   var extra = parseNames(opts.extraPlayerNames)
   var strict = opts.strictBrowserMatch !== false
-  var allowBrowser = opts.browserFallback !== false
+  var source = normalizeSource(opts.playerSource)
 
   var natives = []
   var browsers = []
@@ -114,8 +125,11 @@ function selectPlayer(players, options) {
   for (var i = 0; i < players.length; i++) {
     var player = players[i]
     if (!player) continue
-    if (isNative(player, extra)) natives.push(player)
-    else if (allowBrowser && isBrowser(player) && looksLikeMusic(player, strict)) browsers.push(player)
+    if (isNative(player, extra)) {
+      if (source !== "browser") natives.push(player)
+    } else if (source !== "native" && isBrowser(player) && looksLikeMusic(player, strict)) {
+      browsers.push(player)
+    }
   }
 
   return preferPlaying(natives) || preferPlaying(browsers)

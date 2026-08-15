@@ -11,7 +11,7 @@ Panel {
   moduleName: "io.github.haripako.omamusic"
   ipcTarget: "io.github.haripako.omamusic"
 
-  readonly property bool browserFallback: root.setting("browserFallback", true)
+  readonly property string playerSource: root.setting("playerSource", "Auto")
   readonly property bool strictBrowserMatch: root.setting("strictBrowserMatch", true)
   readonly property string extraPlayerNames: root.setting("extraPlayerNames", "")
   readonly property bool showVolume: root.setting("showVolume", true)
@@ -20,7 +20,7 @@ Panel {
   readonly property string launchCommand: root.setting("launchCommand", "")
 
   property var player: Model.selectPlayer(Mpris.players.values, {
-    browserFallback: root.browserFallback,
+    playerSource: root.playerSource,
     strictBrowserMatch: root.strictBrowserMatch,
     extraPlayerNames: root.extraPlayerNames
   })
@@ -32,7 +32,14 @@ Panel {
   readonly property string albumName: player ? (player.trackAlbum || "") : ""
   readonly property string sourceLabel: Model.sourceLabel(player, root.extraPlayerNames)
   readonly property bool canSeek: player ? (player.canSeek && player.positionSupported && player.length > 0) : false
-  readonly property bool hasVolume: player ? (root.showVolume && player.volumeSupported) : false
+  // Prefer the player's own volume; fall back to its PipeWire stream so the
+  // browser route gets a working slider instead of no slider at all.
+  readonly property bool mprisVolume: player ? player.volumeSupported : false
+  readonly property bool hasVolume: player !== null && root.showVolume
+    && (root.mprisVolume || streamVolume.available)
+  readonly property real currentVolume: root.mprisVolume
+    ? (player ? player.volume : 0)
+    : streamVolume.volume
 
   // Wider-than-tall artwork means a music video rather than a song.
   readonly property bool isVideo: albumArt.status === Image.Ready
@@ -57,9 +64,20 @@ Panel {
     onTriggered: if (root.player) root.player.positionChanged()
   }
 
+  function setVolume(value) {
+    var next = Math.max(0, Math.min(1, value))
+    if (root.mprisVolume) root.player.volume = next
+    else streamVolume.setVolume(next)
+  }
+
   function nudgeVolume(delta) {
-    if (!root.player || !root.player.volumeSupported) return
-    root.player.volume = Math.max(0, Math.min(1, root.player.volume + delta))
+    if (!root.hasVolume) return
+    root.setVolume(root.currentVolume + delta)
+  }
+
+  StreamVolume {
+    id: streamVolume
+    appHint: root.player ? root.player.identity : ""
   }
 
   // MPRIS can only talk to a player that already exists, so starting from an
@@ -68,9 +86,16 @@ Panel {
   function launchPlayer() {
     var command = root.launchCommand
     if (command === "") {
-      command = "if command -v youtube-music >/dev/null 2>&1; then exec youtube-music; " +
-        "elif command -v pear-desktop >/dev/null 2>&1; then exec pear-desktop; " +
-        "else exec xdg-open https://music.youtube.com; fi"
+      var openBrowser = "exec xdg-open https://music.youtube.com"
+      // Forcing the browser source and then launching a native app would
+      // start something the widget has been told to ignore.
+      if (Model.normalizeSource(root.playerSource) === "browser") {
+        command = openBrowser
+      } else {
+        command = "if command -v youtube-music >/dev/null 2>&1; then exec youtube-music; " +
+          "elif command -v pear-desktop >/dev/null 2>&1; then exec pear-desktop; " +
+          "else " + openBrowser + "; fi"
+      }
     }
     Util.execDetached(command)
   }
@@ -446,7 +471,7 @@ Panel {
           Text {
             id: volumeIcon
             anchors.verticalCenter: parent.verticalCenter
-            text: root.player && root.player.volume <= 0.001 ? "" : ""
+            text: root.currentVolume <= 0.001 ? "" : ""
             color: root.dimForeground
             font.family: root.contentFontFamily
             font.pixelSize: Style.font.caption
@@ -459,11 +484,11 @@ Panel {
             minimum: 0
             maximum: 1
             step: 0.05
-            value: root.player ? root.player.volume : 0
+            value: root.currentVolume
             trackHeight: Math.max(3, Style.space(3))
             knobSize: Style.space(9)
             onMoved: function(nextVolume) {
-              if (root.player) root.player.volume = nextVolume
+              root.setVolume(nextVolume)
             }
           }
         }
