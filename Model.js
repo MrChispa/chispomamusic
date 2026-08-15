@@ -19,7 +19,11 @@ var NATIVE_NAMES = [
   "youtubemusic",
   "youtube_music",
   "ytmdesktop",
-  "ytmd"
+  "ytmd",
+  // th-ch/youtube-music was renamed to pear-devs/pear-desktop in 2026 and
+  // newer builds may announce themselves under the new name.
+  "pear desktop",
+  "pear-desktop"
 ]
 
 var BROWSER_NAMES = [

@@ -22,7 +22,8 @@
       "strictBrowserMatch": true,
       "extraPlayerNames": "",
       "showVolume": true,
-      "scrollVolume": true
+      "scrollVolume": true,
+      "showVisualizer": true
     },
     "schema": [
       {
@@ -58,6 +59,13 @@
         "type": "boolean",
         "label": "Scroll to change volume",
         "description": "Adjust volume by scrolling over the bar icon",
+        "defaultValue": true
+      },
+      {
+        "key": "showVisualizer",
+        "type": "boolean",
+        "label": "Show spectrum visualizer",
+        "description": "Draw a live audio histogram while playing (requires cava; reflects system audio)",
         "defaultValue": true
       }
     ]

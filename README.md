@@ -8,7 +8,11 @@ Bar widget + popup panel for **YouTube Music** via MPRIS
 No background service, no API keys, no persisted state — everything is read
 live from the player's D-Bus interface. Click the icon in the bar to open a
 popup with album art, track info, a seekable progress bar, shuffle/repeat,
-playback controls and volume.
+playback controls, volume and a live spectrum histogram.
+
+The plugin is **source-independent**: it never launches or requires any
+particular app. Whatever is playing YouTube Music — a native client or a
+browser tab — is what it controls.
 
 Inspired by [omaspotify](https://github.com/cempack/omaspotify), rewritten for
 YouTube Music.
@@ -16,18 +20,22 @@ YouTube Music.
 ## Requirements
 
 - **Omarchy** (Quickshell-based desktop)
-- Nerd Fonts (for the glyphs)
+- A Nerd Font v3 (the icons use the Material Design range)
 - A YouTube Music source that speaks MPRIS — either a native client or a
   browser tab, see below
+- *Optional:* [`cava`](https://github.com/karlstav/cava) for the spectrum
+  histogram. Without it the visualizer simply does not appear.
 
 ## Which players work
 
 **Native clients** are matched by MPRIS identity / desktop entry and always
 win over browsers:
 
-- [th-ch/youtube-music](https://github.com/th-ch/youtube-music) (enable its
-  bundled MPRIS / media-control plugin)
+- [pear-desktop](https://github.com/pear-devs/pear-desktop) — formerly
+  `th-ch/youtube-music`; both the old and new identities are matched
 - [YTMDesktop](https://github.com/ytmdesktop/ytmdesktop)
+
+Any other client can be added through the `extraPlayerNames` setting.
 
 **Browser playback** on `music.youtube.com` (a normal tab or an installed PWA)
 also works through the browser's own MPRIS session — Firefox, Chromium,
@@ -75,6 +83,9 @@ You can drag-and-drop it to reposition later, or edit
 - **Scroll over the icon** — volume (when the player supports it)
 - **In the popup** — shuffle, previous, play/pause, next, repeat; drag the
   progress bar to seek, drag the volume slider to set volume
+- **Music videos** — when the artwork is 16:9 rather than square, the cover is
+  drawn as a video thumbnail with a small camera badge
+- **Spectrum histogram** — animates while playing, hidden when paused
 
 ## Keyboard shortcuts
 
@@ -109,6 +120,7 @@ widget's entry in `~/.config/omarchy/shell.json`:
 | `extraPlayerNames` | `""` | Comma-separated MPRIS identities/desktop entries to also treat as YouTube Music |
 | `showVolume` | `true` | Show the volume slider when supported |
 | `scrollVolume` | `true` | Scroll over the bar icon to change volume |
+| `showVisualizer` | `true` | Draw the live spectrum histogram while playing |
 
 ## Notes and limitations
 
@@ -121,6 +133,13 @@ widget's entry in `~/.config/omarchy/shell.json`:
   so browser sessions typically show neither.
 - **Likes / thumbs up** are not exposed over MPRIS and are therefore not
   available here.
+- **The visualizer shows system audio, not the player.** `cava` reads the
+  default sink monitor, and Linux gives no per-application spectrum without
+  capturing that stream directly. If something else is making noise, you will
+  see it. cava only runs while the popup is open and playback is active.
+- **Video detection is inferred from the artwork ratio** (16:9 vs square), not
+  from a metadata flag — MPRIS has none. It is right for the usual cases and
+  can be fooled by unusual artwork.
 
 ## Update
 

@@ -16,6 +16,7 @@ Panel {
   readonly property string extraPlayerNames: root.setting("extraPlayerNames", "")
   readonly property bool showVolume: root.setting("showVolume", true)
   readonly property bool scrollVolume: root.setting("scrollVolume", true)
+  readonly property bool showVisualizer: root.setting("showVisualizer", true)
 
   property var player: Model.selectPlayer(Mpris.players.values, {
     browserFallback: root.browserFallback,
@@ -31,6 +32,11 @@ Panel {
   readonly property string sourceLabel: Model.sourceLabel(player, root.extraPlayerNames)
   readonly property bool canSeek: player ? (player.canSeek && player.positionSupported && player.length > 0) : false
   readonly property bool hasVolume: player ? (root.showVolume && player.volumeSupported) : false
+
+  // Wider-than-tall artwork means a music video rather than a song.
+  readonly property bool isVideo: albumArt.status === Image.Ready
+    && albumArt.implicitHeight > 0
+    && (albumArt.implicitWidth / albumArt.implicitHeight) > 1.25
 
   readonly property color contentForeground: bar ? bar.barForeground : Color.foreground
   readonly property color dimForeground: Qt.darker(contentForeground, 1.45)
@@ -138,8 +144,10 @@ Panel {
 
           Rectangle {
             id: cover
-            width: Style.space(92)
-            height: width
+            // Songs carry square art, music videos carry 16:9 thumbnails, so
+            // the artwork's own aspect ratio is what tells the two apart.
+            width: Style.space(root.isVideo ? 124 : 92)
+            height: root.isVideo ? Math.round(width * 9 / 16) : width
             radius: Style.cornerRadius
             color: root.subtleFill
             border.width: Math.max(1, Style.space(1))
@@ -156,14 +164,36 @@ Panel {
             }
 
             Image {
+              id: albumArt
               anchors.fill: parent
               visible: root.artUrl !== "" && status !== Image.Error
               source: root.artUrl
-              sourceSize.width: Style.space(220)
-              sourceSize.height: Style.space(220)
+              // Width only: constraining both axes would flatten the ratio we
+              // need in order to recognise a video thumbnail.
+              sourceSize.width: Style.space(320)
               fillMode: Image.PreserveAspectCrop
               asynchronous: true
               cache: true
+            }
+
+            Rectangle {
+              visible: root.isVideo
+              anchors.right: parent.right
+              anchors.bottom: parent.bottom
+              anchors.margins: Math.max(2, Style.space(4))
+              width: badge.implicitWidth + Style.space(8)
+              height: badge.implicitHeight + Style.space(4)
+              radius: height / 2
+              color: Qt.rgba(0, 0, 0, 0.62)
+
+              Text {
+                id: badge
+                anchors.centerIn: parent
+                text: "\udb81\udd67"
+                color: "white"
+                font.family: root.contentFontFamily
+                font.pixelSize: Style.font.caption
+              }
             }
           }
 
@@ -229,6 +259,12 @@ Panel {
             font.family: root.contentFontFamily
             font.pixelSize: Style.font.body
           }
+        }
+
+        Visualizer {
+          width: parent.width
+          barColor: Color.accent
+          active: root.showVisualizer && root.opened && root.playing
         }
 
         Column {
