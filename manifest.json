@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.haripako.omamusic",
+  "name": "Omamusic",
+  "version": "1.0.0",
+  "author": "Hari Vargas",
+  "license": "MIT",
+  "description": "YouTube Music MPRIS controller with album art, seekable progress bar, shuffle/repeat, and volume in a popup panel",
+  "homepage": "https://github.com/haripako/omamusic",
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Omamusic",
+    "description": "YouTube Music controller with album art, progress bar, and playback controls",
+    "category": "Media",
+    "allowMultiple": false,
+    "defaultSection": "center",
+    "defaults": {
+      "browserFallback": true,
+      "strictBrowserMatch": true,
+      "extraPlayerNames": "",
+      "showVolume": true,
+      "scrollVolume": true
+    },
+    "schema": [
+      {
+        "key": "browserFallback",
+        "type": "boolean",
+        "label": "Browser fallback",
+        "description": "Also control music.youtube.com playing in a browser tab or PWA",
+        "defaultValue": true
+      },
+      {
+        "key": "strictBrowserMatch",
+        "type": "boolean",
+        "label": "Strict browser match",
+        "description": "Only adopt a browser session when it reports both artist and album, which keeps plain YouTube videos out",
+        "defaultValue": true
+      },
+      {
+        "key": "extraPlayerNames",
+        "type": "string",
+        "label": "Extra player names",
+        "description": "Comma-separated MPRIS identities or desktop entries to treat as YouTube Music",
+        "defaultValue": ""
+      },
+      {
+        "key": "showVolume",
+        "type": "boolean",
+        "label": "Show volume slider",
+        "description": "Display a volume slider when the player supports it",
+        "defaultValue": true
+      },
+      {
+        "key": "scrollVolume",
+        "type": "boolean",
+        "label": "Scroll to change volume",
+        "description": "Adjust volume by scrolling over the bar icon",
+        "defaultValue": true
+      }
+    ]
+  }
+}
