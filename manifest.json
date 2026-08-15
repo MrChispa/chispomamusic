@@ -24,7 +24,8 @@
       "showVolume": true,
       "scrollVolume": true,
       "showVisualizer": true,
-      "launchCommand": ""
+      "launchCommand": "",
+      "quickLinks": "Liked songs|https://music.youtube.com/playlist?list=LM, Library|https://music.youtube.com/library"
     },
     "schema": [
       {
@@ -69,6 +70,13 @@
         "label": "Show spectrum visualizer",
         "description": "Draw a live audio histogram while playing (requires cava; reflects system audio)",
         "defaultValue": true
+      },
+      {
+        "key": "quickLinks",
+        "type": "string",
+        "label": "Quick links",
+        "description": "Playlist shortcuts shown in the popup, as \"Name|URL\" separated by commas. MPRIS cannot switch playlists, so these open the playlist in your browser instead.",
+        "defaultValue": "Liked songs|https://music.youtube.com/playlist?list=LM, Library|https://music.youtube.com/library"
       },
       {
         "key": "launchCommand",

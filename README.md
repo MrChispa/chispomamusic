@@ -121,6 +121,7 @@ Inside the popup:
 | `Up` / `Down` | Volume up / down |
 | `s` | Toggle shuffle |
 | `r` | Cycle repeat (off → playlist → track) |
+| `1`–`9` | Open the matching quick link |
 | `Escape` | Close popup |
 | `Tab` | Switch to adjacent panel |
 
@@ -163,6 +164,35 @@ widget's entry in `~/.config/omarchy/shell.json`:
 | `scrollVolume` | `true` | Scroll over the bar icon to change volume |
 | `showVisualizer` | `true` | Draw the live spectrum histogram while playing |
 | `launchCommand` | `""` | Command for the play button when idle; empty auto-detects |
+| `quickLinks` | Liked songs, Library | Playlist shortcuts, as `Name|URL` separated by commas |
+
+## Playlists and Liked songs
+
+MPRIS defines `Playlists` and `TrackList` interfaces for exactly this, and
+browsers implement neither — verified by calling both against a live Chromium
+session, where each one fails. "Liked" is not in the MPRIS spec at any level.
+So the widget cannot read your library or toggle a thumbs-up.
+
+What it can do is open one, because a YouTube Music playlist is just a URL.
+The popup shows a row of quick links — *Liked songs* and *Library* out of the
+box — which open in your default browser and start playing. They are shown
+while idle too, which is when starting a playlist is most useful, and the
+first nine are bound to keys `1`–`9`.
+
+Add your own by editing `quickLinks`, using `Name|URL` entries separated by
+commas. Copy the URL straight from the address bar:
+
+```
+Liked songs|https://music.youtube.com/playlist?list=LM, Chill|https://music.youtube.com/playlist?list=PLxxxxxxxx
+```
+
+Entries without a valid `http(s)` URL are ignored rather than rendered as
+buttons that do nothing.
+
+This navigates the tab rather than queueing in place. True in-app playlist and
+like control would need a native client that exposes its own HTTP API
+(pear-desktop, YTMDesktop) — possible to add later, but it would reintroduce
+the app dependency this plugin deliberately avoids.
 
 ## Notes and limitations
 

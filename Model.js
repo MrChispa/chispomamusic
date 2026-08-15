@@ -180,6 +180,35 @@ function sourceLabel(player, extraPlayerNames) {
   return "via " + (player.identity || "browser")
 }
 
+// Quick links are the only route to playlists and Liked songs that works
+// without a native client: MPRIS has Playlists and TrackList interfaces, but
+// browsers implement neither (verified against a live Chromium session), and
+// "liked" is not part of the spec at all. A YouTube Music playlist is just a
+// URL, so opening one is a real, honest way to switch what is playing.
+//
+// Format: "Name|URL, Name|URL". Entries missing a URL are dropped rather than
+// rendered as buttons that would do nothing.
+function parseQuickLinks(raw) {
+  var links = []
+  if (!raw) return links
+
+  var entries = String(raw).split(",")
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i]
+    var separator = entry.indexOf("|")
+    if (separator === -1) continue
+
+    var name = entry.slice(0, separator).trim()
+    var url = entry.slice(separator + 1).trim()
+    if (name.length === 0 || url.length === 0) continue
+    // Only ever hand a browser something that is actually a web address.
+    if (url.indexOf("http://") !== 0 && url.indexOf("https://") !== 0) continue
+
+    links.push({ name: name, url: url })
+  }
+  return links
+}
+
 function formatTime(seconds) {
   if (!seconds || seconds <= 0 || !isFinite(seconds)) return "0:00"
   var total = Math.floor(seconds)

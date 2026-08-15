@@ -18,6 +18,9 @@ Panel {
   readonly property bool scrollVolume: root.setting("scrollVolume", true)
   readonly property bool showVisualizer: root.setting("showVisualizer", true)
   readonly property string launchCommand: root.setting("launchCommand", "")
+  readonly property string quickLinks: root.setting("quickLinks",
+    "Liked songs|https://music.youtube.com/playlist?list=LM, Library|https://music.youtube.com/library")
+  readonly property var quickLinkList: Model.parseQuickLinks(root.quickLinks)
 
   property var player: Model.selectPlayer(Mpris.players.values, {
     playerSource: root.playerSource,
@@ -105,6 +108,11 @@ Panel {
     Util.execDetached(command)
   }
 
+  function openQuickLink(url) {
+    Util.execDetached("exec xdg-open " + Util.shellQuote(url))
+    root.close()
+  }
+
   function cycleLoop() {
     if (!root.player || !root.player.loopSupported) return
     if (root.player.loopState === MprisLoopState.None) root.player.loopState = MprisLoopState.Playlist
@@ -171,6 +179,16 @@ Panel {
       onCloseRequested: root.close()
       onTabRequested: function(direction) { root.switchPanel(direction) }
       onTextKey: function(text) {
+        // Quick links work with or without playback — starting a playlist is
+        // most useful precisely when nothing is playing yet.
+        if (text >= "1" && text <= "9") {
+          var slot = parseInt(text, 10) - 1
+          if (slot < root.quickLinkList.length) {
+            root.openQuickLink(root.quickLinkList[slot].url)
+            return
+          }
+        }
+
         if (!root.player) {
           if (text === " ") { root.launchPlayer(); root.close() }
           return
@@ -498,6 +516,35 @@ Panel {
             knobSize: Style.space(9)
             onMoved: function(nextVolume) {
               root.setVolume(nextVolume)
+            }
+          }
+        }
+
+        // MPRIS cannot switch playlists or read "liked" state, but a YouTube
+        // Music playlist is a URL — so these open one directly. Shown while
+        // idle as well, which is exactly when starting a playlist is useful.
+        Flow {
+          visible: root.quickLinkList.length > 0
+          width: parent.width
+          spacing: Style.space(6)
+
+          Repeater {
+            model: root.quickLinkList
+
+            Button {
+              required property var modelData
+              required property int index
+
+              bordered: true
+              text: modelData.name
+              tooltipText: root.quickLinkList.length <= 9 && index < 9
+                ? "Open in your browser (" + (index + 1) + ")"
+                : "Open in your browser"
+              foreground: root.contentForeground
+              accent: Color.accent
+              fontFamily: root.contentFontFamily
+              fontSize: Style.font.caption
+              onClicked: root.openQuickLink(modelData.url)
             }
           }
         }
