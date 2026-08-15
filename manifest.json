@@ -23,7 +23,8 @@
       "extraPlayerNames": "",
       "showVolume": true,
       "scrollVolume": true,
-      "showVisualizer": true
+      "showVisualizer": true,
+      "launchCommand": ""
     },
     "schema": [
       {
@@ -67,6 +68,13 @@
         "label": "Show spectrum visualizer",
         "description": "Draw a live audio histogram while playing (requires cava; reflects system audio)",
         "defaultValue": true
+      },
+      {
+        "key": "launchCommand",
+        "type": "string",
+        "label": "Launch command",
+        "description": "Command run by the play button when nothing is playing. Empty uses the native client if installed, otherwise music.youtube.com",
+        "defaultValue": ""
       }
     ]
   }

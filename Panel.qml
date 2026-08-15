@@ -17,6 +17,7 @@ Panel {
   readonly property bool showVolume: root.setting("showVolume", true)
   readonly property bool scrollVolume: root.setting("scrollVolume", true)
   readonly property bool showVisualizer: root.setting("showVisualizer", true)
+  readonly property string launchCommand: root.setting("launchCommand", "")
 
   property var player: Model.selectPlayer(Mpris.players.values, {
     browserFallback: root.browserFallback,
@@ -61,6 +62,19 @@ Panel {
     root.player.volume = Math.max(0, Math.min(1, root.player.volume + delta))
   }
 
+  // MPRIS can only talk to a player that already exists, so starting from an
+  // idle bar means launching one: the native client when it is installed,
+  // otherwise music.youtube.com in the default browser.
+  function launchPlayer() {
+    var command = root.launchCommand
+    if (command === "") {
+      command = "if command -v youtube-music >/dev/null 2>&1; then exec youtube-music; " +
+        "elif command -v pear-desktop >/dev/null 2>&1; then exec pear-desktop; " +
+        "else exec xdg-open https://music.youtube.com; fi"
+    }
+    Util.execDetached(command)
+  }
+
   function cycleLoop() {
     if (!root.player || !root.player.loopSupported) return
     if (root.player.loopState === MprisLoopState.None) root.player.loopState = MprisLoopState.Playlist
@@ -81,8 +95,9 @@ Panel {
       : "YouTube Music"
 
     onPressed: function(buttonCode) {
-      if (buttonCode === Qt.MiddleButton && root.player) root.player.togglePlaying()
-      else root.toggle()
+      if (buttonCode !== Qt.MiddleButton) root.toggle()
+      else if (root.player) root.player.togglePlaying()
+      else root.launchPlayer()
     }
 
     // Wheel-over-icon volume. Transparent to clicks and hover so the button
@@ -119,11 +134,17 @@ Panel {
         else if (dx > 0 && root.player && root.player.canGoNext) root.player.next()
         else if (dx < 0 && root.player && root.player.canGoPrevious) root.player.previous()
       }
-      onActivateRequested: if (root.player) root.player.togglePlaying()
+      onActivateRequested: {
+        if (root.player) root.player.togglePlaying()
+        else { root.launchPlayer(); root.close() }
+      }
       onCloseRequested: root.close()
       onTabRequested: function(direction) { root.switchPanel(direction) }
       onTextKey: function(text) {
-        if (!root.player) return
+        if (!root.player) {
+          if (text === " ") { root.launchPlayer(); root.close() }
+          return
+        }
         if (text === " ") root.player.togglePlaying()
         else if (text === "n" && root.player.canGoNext) root.player.next()
         else if (text === "p" && root.player.canGoPrevious) root.player.previous()
@@ -238,26 +259,47 @@ Panel {
           }
         }
 
-        Row {
+        Column {
           visible: root.player === null
           width: parent.width
-          height: Style.space(38)
           spacing: Style.space(10)
 
-          Text {
-            anchors.verticalCenter: parent.verticalCenter
-            text: "\udb81\uddc3"
-            color: root.dimForeground
-            font.family: root.contentFontFamily
-            font.pixelSize: Style.font.icon
+          Row {
+            width: parent.width
+            height: Style.space(24)
+            spacing: Style.space(10)
+
+            Text {
+              anchors.verticalCenter: parent.verticalCenter
+              text: "\udb81\uddc3"
+              color: root.dimForeground
+              font.family: root.contentFontFamily
+              font.pixelSize: Style.font.icon
+            }
+
+            Text {
+              anchors.verticalCenter: parent.verticalCenter
+              text: "Nothing playing"
+              color: root.dimForeground
+              font.family: root.contentFontFamily
+              font.pixelSize: Style.font.body
+            }
           }
 
-          Text {
-            anchors.verticalCenter: parent.verticalCenter
-            text: "YouTube Music is idle"
-            color: root.dimForeground
-            font.family: root.contentFontFamily
-            font.pixelSize: Style.font.body
+          Button {
+            width: parent.width
+            bordered: true
+            iconText: "\uf04b"
+            text: "Play on YouTube Music"
+            tooltipText: "Launch the native client, or open music.youtube.com"
+            foreground: root.contentForeground
+            accent: Color.accent
+            fontFamily: root.contentFontFamily
+            fontSize: Style.font.body
+            onClicked: {
+              root.launchPlayer()
+              root.close()
+            }
           }
         }
 

@@ -1,7 +1,5 @@
 # Omamusic
 
-![preview](preview.png)
-
 Bar widget + popup panel for **YouTube Music** via MPRIS
 (`Quickshell.Services.Mpris`), for the Omarchy bar.
 
@@ -79,7 +77,12 @@ You can drag-and-drop it to reposition later, or edit
 ## Usage
 
 - **Left click** — open/close the popup
-- **Middle click** — play/pause without opening the popup
+- **Middle click** — play/pause without opening the popup, or start YouTube
+  Music when nothing is playing
+- **Nothing playing** — the popup offers a *Play on YouTube Music* button that
+  launches the native client if it is installed, and otherwise opens
+  `music.youtube.com` in your default browser. Override it with the
+  `launchCommand` setting.
 - **Scroll over the icon** — volume (when the player supports it)
 - **In the popup** — shuffle, previous, play/pause, next, repeat; drag the
   progress bar to seek, drag the volume slider to set volume
@@ -121,6 +124,7 @@ widget's entry in `~/.config/omarchy/shell.json`:
 | `showVolume` | `true` | Show the volume slider when supported |
 | `scrollVolume` | `true` | Scroll over the bar icon to change volume |
 | `showVisualizer` | `true` | Draw the live spectrum histogram while playing |
+| `launchCommand` | `""` | Command for the play button when idle; empty auto-detects |
 
 ## Notes and limitations
 
