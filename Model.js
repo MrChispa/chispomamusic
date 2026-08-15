@@ -31,17 +31,45 @@ var BROWSER_NAMES = [
   "librewolf",
   "waterfox",
   "floorp",
-  "zen browser",
+  "zen",
   "mozilla",
   "chromium",
   "chrome",
+  "thorium",
+  "ungoogled",
   "brave",
   "vivaldi",
   "edge",
   "opera",
+  "yandex",
   "epiphany",
   "gnome web",
-  "webkit"
+  "webkit",
+  "falkon",
+  "konqueror",
+  "midori",
+  "qutebrowser"
+]
+
+// A name list can never keep up with every fork, so the D-Bus name is checked
+// too: browsers derive it from their engine or product, giving
+// "org.mpris.MediaPlayer2.firefox.instance_1" for Firefox and its forks and
+// ".chromium"/".brave"/".chrome" across the Chromium family. This is only
+// consulted for the browser test — Electron apps also land under ".chromium",
+// and those must stay native, which they do because natives match first.
+var BROWSER_BUS_MARKERS = [
+  "firefox",
+  "chromium",
+  "chrome",
+  "brave",
+  "vivaldi",
+  "opera",
+  "edge",
+  "zen",
+  "epiphany",
+  "webkit",
+  "falkon",
+  "qutebrowser"
 ]
 
 function norm(value) {
@@ -77,18 +105,25 @@ function isNative(player, extraNames) {
 }
 
 function isBrowser(player) {
-  return matchesName(player, BROWSER_NAMES)
+  if (matchesName(player, BROWSER_NAMES)) return true
+
+  var bus = norm(player.dbusName)
+  for (var i = 0; i < BROWSER_BUS_MARKERS.length; i++) {
+    if (bus.indexOf(BROWSER_BUS_MARKERS[i]) !== -1) return true
+  }
+  return false
 }
 
-// Browsers expose one MPRIS session for whatever media is active, with no hint
-// about which site it came from. YouTube Music fills the MediaSession metadata
-// with artist *and* album; plain YouTube videos, podcasts and video players
-// almost always leave album empty. Strict mode requires both, which is a
-// heuristic, not a guarantee — hence the setting.
-function looksLikeMusic(player, strict) {
+// A browser publishes ONE MPRIS session for whatever media is active, and
+// Chromium's metadata is limited to title, artist, album, art and length —
+// no URL. Measured against a live session, YouTube Music leaves `album`
+// empty just like a plain YouTube video does, so the metadata alone cannot
+// tell the two apart. Requiring an artist is all it can honestly enforce;
+// anything narrower has to come from outside MPRIS (see titleOk, which the
+// panel derives from window titles).
+function looksLikeMusic(player, titleOk) {
   if (norm(player.trackArtist).length === 0) return false
-  if (!strict) return true
-  return norm(player.trackAlbum).length > 0
+  return titleOk !== false
 }
 
 function preferPlaying(candidates) {
@@ -111,12 +146,14 @@ function normalizeSource(value) {
 }
 
 // `players` is Mpris.players.values. `options` accepts:
-//   playerSource (string), strictBrowserMatch (bool), extraPlayerNames (string)
+//   playerSource (string), titleOk (bool), extraPlayerNames (string)
+// titleOk is the panel's window-title verdict: false rejects browser
+// sessions, anything else accepts them.
 function selectPlayer(players, options) {
   if (!players || players.length === 0) return null
   var opts = options || {}
   var extra = parseNames(opts.extraPlayerNames)
-  var strict = opts.strictBrowserMatch !== false
+  var titleOk = opts.titleOk
   var source = normalizeSource(opts.playerSource)
 
   var natives = []
@@ -127,7 +164,7 @@ function selectPlayer(players, options) {
     if (!player) continue
     if (isNative(player, extra)) {
       if (source !== "browser") natives.push(player)
-    } else if (source !== "native" && isBrowser(player) && looksLikeMusic(player, strict)) {
+    } else if (source !== "native" && isBrowser(player) && looksLikeMusic(player, titleOk)) {
       browsers.push(player)
     }
   }

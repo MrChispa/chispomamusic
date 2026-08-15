@@ -12,7 +12,7 @@ Panel {
   ipcTarget: "io.github.haripako.omamusic"
 
   readonly property string playerSource: root.setting("playerSource", "Auto")
-  readonly property bool strictBrowserMatch: root.setting("strictBrowserMatch", true)
+  readonly property bool strictBrowserMatch: root.setting("strictBrowserMatch", false)
   readonly property string extraPlayerNames: root.setting("extraPlayerNames", "")
   readonly property bool showVolume: root.setting("showVolume", true)
   readonly property bool scrollVolume: root.setting("scrollVolume", true)
@@ -21,9 +21,14 @@ Panel {
 
   property var player: Model.selectPlayer(Mpris.players.values, {
     playerSource: root.playerSource,
-    strictBrowserMatch: root.strictBrowserMatch,
+    titleOk: root.strictBrowserMatch ? windowTitles.matched : true,
     extraPlayerNames: root.extraPlayerNames
   })
+
+  WindowTitles {
+    id: windowTitles
+    enabled: root.strictBrowserMatch
+  }
 
   readonly property bool playing: player ? player.isPlaying : false
   readonly property string artUrl: player ? (player.trackArtUrl || "") : ""
@@ -274,7 +279,11 @@ Panel {
             Text {
               visible: root.albumName !== "" || root.sourceLabel !== ""
               width: parent.width
-              text: root.albumName !== "" ? root.albumName : root.sourceLabel
+              // Keep the source visible even when an album is present: which
+              // session is being driven should never be a guess.
+              text: root.albumName !== "" && root.sourceLabel !== ""
+                ? root.albumName + " · " + root.sourceLabel
+                : (root.albumName !== "" ? root.albumName : root.sourceLabel)
               color: root.dimForeground
               font.family: root.contentFontFamily
               font.pixelSize: Style.font.caption

@@ -38,23 +38,38 @@ win over browsers:
 Any other client can be added through the `extraPlayerNames` setting.
 
 **Browser playback** on `music.youtube.com` (a normal tab or an installed PWA)
-also works through the browser's own MPRIS session — Firefox, Chromium,
-Chrome, Brave, Vivaldi, Edge, Opera, Zen, LibreWolf and friends.
+works through the browser's own MPRIS session, whichever browser you use:
+Firefox, Chromium, Chrome, Brave, Vivaldi, Edge, Opera, Zen, LibreWolf,
+Floorp, Waterfox, qutebrowser, Falkon, Epiphany and so on.
 
-There is a catch worth knowing: a browser exposes **one** MPRIS session for
-whatever media is currently active, and the metadata contains no URL. So the
-widget cannot truly know that the session is YouTube Music. It uses a
-heuristic — YouTube Music fills both **artist** and **album**, while plain
-YouTube videos leave album empty — which is what *Strict browser match*
-(on by default) enforces. It is a good signal, not a guarantee: another site
-that reports a full artist/album pair can be picked up too.
+Forks are covered without needing to be listed by name: besides the identity,
+the D-Bus name is checked, and browsers derive it from their engine
+(`org.mpris.MediaPlayer2.firefox.*` for the Firefox family,
+`.chromium` / `.chrome` / `.brave` for the Chromium family). The *Play* button
+is browser-agnostic too — it opens the URL with `xdg-open`, so your default
+browser is used, whatever it is.
+
+There is a catch worth knowing. A browser publishes **one** MPRIS session for
+whatever media is currently active, and Chromium's metadata is limited to
+title, artist, album, artwork and length — there is no URL. Measured against a
+live session, YouTube Music leaves `album` **empty**, exactly like a plain
+YouTube video does, so the metadata cannot tell the two apart. The widget
+therefore adopts any browser media session that reports an artist, and names
+the source (`via Chromium`) so you always know what you are driving.
+
+If that is too loose, turn on **Strict browser match**: it additionally
+requires a window titled *YouTube Music* to be open, which the tab title does
+expose. The trade-off is real — a browser window reports its *active* tab, so
+switching that window to another tab while music plays in the background makes
+the widget go idle. It is off by default for that reason, and it needs
+Hyprland since it reads `hyprctl`.
 
 If you only ever use a native client, set **Player source** to `Native app`
 and the guessing stops entirely. Setting it to `Browser` does the opposite:
 browser sessions only, and the play button always opens `music.youtube.com`
 rather than launching an app.
 
-When a browser session is being controlled, the panel shows `via <browser>`
+When a browser session is being controlled, the panel appends `via <browser>`
 under the track so it is never ambiguous which session you are driving.
 
 ## Install
@@ -142,7 +157,7 @@ widget's entry in `~/.config/omarchy/shell.json`:
 | Setting | Default | What it does |
 |---------|---------|--------------|
 | `playerSource` | `Auto` | `Auto`, `Native app` or `Browser` — where playback is controlled |
-| `strictBrowserMatch` | `true` | Only adopt a browser session reporting artist **and** album |
+| `strictBrowserMatch` | `false` | Also require an open window titled *YouTube Music* (Hyprland only) |
 | `extraPlayerNames` | `""` | Comma-separated MPRIS identities/desktop entries to also treat as YouTube Music |
 | `showVolume` | `true` | Show the volume slider when supported |
 | `scrollVolume` | `true` | Scroll over the bar icon to change volume |

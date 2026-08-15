@@ -19,7 +19,7 @@
     "defaultSection": "center",
     "defaults": {
       "playerSource": "Auto",
-      "strictBrowserMatch": true,
+      "strictBrowserMatch": false,
       "extraPlayerNames": "",
       "showVolume": true,
       "scrollVolume": true,
@@ -39,8 +39,8 @@
         "key": "strictBrowserMatch",
         "type": "boolean",
         "label": "Strict browser match",
-        "description": "Only adopt a browser session when it reports both artist and album, which keeps plain YouTube videos out",
-        "defaultValue": true
+        "description": "Only adopt a browser session while a window titled \"YouTube Music\" is open. More precise, but goes idle if that window switches to another tab (Hyprland only)",
+        "defaultValue": false
       },
       {
         "key": "extraPlayerNames",
