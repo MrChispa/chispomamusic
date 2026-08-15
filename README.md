@@ -165,6 +165,7 @@ widget's entry in `~/.config/omarchy/shell.json`:
 | `showVisualizer` | `true` | Draw the live spectrum histogram while playing |
 | `launchCommand` | `""` | Command for the play button when idle; empty auto-detects |
 | `quickLinks` | Liked songs, Library | Playlist shortcuts, as `Name|URL` separated by commas |
+| `quickLinkBehavior` | `Focus if open` | Raise an existing YouTube Music window instead of opening a tab |
 
 ## Playlists and Liked songs
 
@@ -188,6 +189,16 @@ Liked songs|https://music.youtube.com/playlist?list=LM, Chill|https://music.yout
 
 Entries without a valid `http(s)` URL are ignored rather than rendered as
 buttons that do nothing.
+
+**Focus instead of stacking tabs.** A browser tab cannot be reused from
+outside, so opening a link repeatedly would pile up duplicates. With
+`quickLinkBehavior` left at `Focus if open`, the widget first tries to raise
+an existing YouTube Music window and only opens the URL when there is none.
+The window is matched on titles *ending* in "YouTube Music", so a page merely
+mentioning the words is not focused by mistake. Since a browser window reports
+its active tab, a YouTube Music tab sitting in the background of another
+window cannot be found — the link then opens as before. Set `Always open` to
+skip the focus attempt and navigate every time.
 
 This navigates the tab rather than queueing in place. True in-app playlist and
 like control would need a native client that exposes its own HTTP API

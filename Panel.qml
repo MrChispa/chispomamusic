@@ -21,6 +21,15 @@ Panel {
   readonly property string quickLinks: root.setting("quickLinks",
     "Liked songs|https://music.youtube.com/playlist?list=LM, Library|https://music.youtube.com/library")
   readonly property var quickLinkList: Model.parseQuickLinks(root.quickLinks)
+  readonly property string quickLinkBehavior: root.setting("quickLinkBehavior", "Focus if open")
+  readonly property bool focusFirst: String(root.quickLinkBehavior).toLowerCase().indexOf("always") === -1
+
+  // Raises an existing YouTube Music window instead of piling up duplicate
+  // tabs. The title must *end* with "YouTube Music" so a page merely
+  // mentioning it does not get focused. Prints "ok" when a window matched,
+  // which is what lets the caller fall back to opening the URL.
+  readonly property string focusCommand:
+    "hyprctl dispatch 'hl.dsp.focus({ window = \"title:^(.*YouTube Music( [-\u2014|].*)?)$\" })' 2>/dev/null | grep -q '^ok'"
 
   property var player: Model.selectPlayer(Mpris.players.values, {
     playerSource: root.playerSource,
@@ -105,11 +114,14 @@ Panel {
           "else " + openBrowser + "; fi"
       }
     }
-    Util.execDetached(command)
+    Util.execDetached(root.focusFirst ? (root.focusCommand + " || { " + command + " ; }") : command)
   }
 
   function openQuickLink(url) {
-    Util.execDetached("exec xdg-open " + Util.shellQuote(url))
+    var open = "exec xdg-open " + Util.shellQuote(url)
+    // Focusing wins over navigating when YouTube Music is already up: the
+    // tab cannot be reused, so opening one would just accumulate duplicates.
+    Util.execDetached(root.focusFirst ? (root.focusCommand + " || " + open) : open)
     root.close()
   }
 
@@ -523,10 +535,20 @@ Panel {
         // MPRIS cannot switch playlists or read "liked" state, but a YouTube
         // Music playlist is a URL — so these open one directly. Shown while
         // idle as well, which is exactly when starting a playlist is useful.
-        Flow {
+        // Equal-width cells spanning the full panel, so the row shares the
+        // edges of the progress and volume sliders instead of leaving a
+        // ragged gap, and sits on the same axis as the transport controls.
+        Grid {
+          id: quickLinkGrid
           visible: root.quickLinkList.length > 0
           width: parent.width
           spacing: Style.space(6)
+          columns: root.quickLinkList.length === 1
+            ? 1
+            : (root.quickLinkList.length % 3 === 0 ? 3 : 2)
+
+          readonly property real cellWidth:
+            (width - spacing * (columns - 1)) / columns
 
           Repeater {
             model: root.quickLinkList
@@ -535,6 +557,7 @@ Panel {
               required property var modelData
               required property int index
 
+              width: quickLinkGrid.cellWidth
               bordered: true
               text: modelData.name
               tooltipText: root.quickLinkList.length <= 9 && index < 9

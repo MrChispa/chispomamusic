@@ -17,7 +17,6 @@ Item {
   id: root
 
   property bool enabled: false
-  property string needle: "youtube music"
   readonly property bool matched: _matched
 
   property bool _matched: false
@@ -41,12 +40,19 @@ Item {
     }
   }
 
+  // "YouTube Music" must end the page title, optionally followed by the
+  // browser's own suffix. A plain substring test is not enough: a GitHub page
+  // *about* YouTube Music matched during testing, which would have made the
+  // filter adopt unrelated media.
+  function isYouTubeMusicTitle(title) {
+    return /youtube music( [-\u2014|].*)?$/i.test(String(title || ""))
+  }
+
   function scan(payload) {
     try {
       var clients = JSON.parse(payload)
       for (var i = 0; i < clients.length; i++) {
-        var title = String(clients[i].title || "").toLowerCase()
-        if (title.indexOf(root.needle) !== -1) return true
+        if (isYouTubeMusicTitle(clients[i].title)) return true
       }
     } catch (error) {
       // hyprctl missing or not Hyprland: fail open rather than blanking the
