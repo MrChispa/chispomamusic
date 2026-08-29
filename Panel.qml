@@ -354,16 +354,6 @@ Panel {
 
           Item { Layout.fillWidth: true }
 
-          Text {
-            Layout.alignment: Qt.AlignVCenter
-            visible: root.sourceLabel !== ""
-            text: root.sourceLabel
-            color: root.dimForeground
-            font.family: root.contentFontFamily
-            font.pixelSize: Style.font.caption
-            elide: Text.ElideRight
-          }
-
           PanelActionButton {
             Layout.alignment: Qt.AlignVCenter
             iconText: "\uf53f"
@@ -375,6 +365,16 @@ Panel {
             size: Style.space(22)
             bordered: false
             onClicked: root.cycleTheme()
+          }
+
+          Text {
+            Layout.alignment: Qt.AlignVCenter
+            visible: root.sourceLabel !== ""
+            text: root.sourceLabel
+            color: root.dimForeground
+            font.family: root.contentFontFamily
+            font.pixelSize: Style.font.caption
+            elide: Text.ElideRight
           }
 
           PanelActionButton {
