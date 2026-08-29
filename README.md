@@ -25,7 +25,8 @@ sits right next to the icon. Clicking the icon still opens the menu as usual;
 the equalizer is purely decorative and never intercepts clicks. The bars
 reflect *system* audio, exactly like the popup visualizer.
 
-The look is set with the `neonTheme` setting:
+The look is set with the `neonTheme` setting — or click the small
+palette button in the popup header to cycle it on the fly (keyboard: `t`):
 
 - **Auto** (default) — follows the active theme accent, so the equalizer
   matches whatever theme you switch to. If you pin an explicit `neonColor` in
@@ -148,6 +149,7 @@ Inside the popup:
 | `Up` / `Down` | Volume up / down |
 | `s` | Toggle shuffle |
 | `r` | Cycle repeat (off → playlist → track) |
+| `t` | Cycle the equalizer theme (Auto → Cyberpunk → Minimalist) |
 | `1`–`9` | Open the matching quick link |
 | `Escape` | Close popup |
 | `Tab` | Switch to adjacent panel |

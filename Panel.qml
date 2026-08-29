@@ -202,6 +202,21 @@ Panel {
     else root.player.loopState = MprisLoopState.None
   }
 
+  // Cycle the equalizer theme (Auto -> Cyberpunk -> Minimalist -> Auto).
+  // Applies instantly for this session and persists through the canonical
+  // widget-setting channel (`omarchy bar set`), so the choice survives a
+  // restart and shows up in the shell settings UI.
+  function cycleTheme() {
+    var next = root.cyberpunkTheme ? "Minimalist"
+      : (root.minimalTheme ? "Auto" : "Cyberpunk")
+    var s = root.settings || {}
+    var updated = {}
+    for (var k in s) updated[k] = s[k]
+    updated.neonTheme = next
+    root.settings = updated
+    Util.execDetached("omarchy bar set io.github.haripako.omamusic neonTheme " + next)
+  }
+
   BarIconButton {
     id: button
     anchors.left: parent.left
@@ -298,6 +313,7 @@ Panel {
         else if (text === "p" && root.player.canGoPrevious) root.player.previous()
         else if (text === "s" && root.player.shuffleSupported) root.player.shuffle = !root.player.shuffle
         else if (text === "r") root.cycleLoop()
+        else if (text === "t") root.cycleTheme()
       }
 
       Column {
@@ -346,6 +362,19 @@ Panel {
             font.family: root.contentFontFamily
             font.pixelSize: Style.font.caption
             elide: Text.ElideRight
+          }
+
+          PanelActionButton {
+            Layout.alignment: Qt.AlignVCenter
+            iconText: "\uf53f"
+            tooltipText: "Equalizer theme: " + root.neonTheme + " — click to cycle"
+            foreground: root.dimForeground
+            hoverColor: root.effectiveNeon
+            fontFamily: root.contentFontFamily
+            fontSize: Style.font.caption
+            size: Style.space(22)
+            bordered: false
+            onClicked: root.cycleTheme()
           }
 
           PanelActionButton {
