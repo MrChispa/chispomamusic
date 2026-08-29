@@ -19,8 +19,13 @@ barra de progreso con *seek*, aleatorio/repetir, controles de reproducción,
 volumen y un histograma de espectro en vivo.
 
 El plugin es **independiente de la fuente**: nunca lanza ni requiere una app
-concreta. Lo que sea que esté reproduciendo YouTube Music — un cliente nativo
-o una pestaña del navegador — es lo que controla.
+concreta. No es exclusivo de YouTube Music — **funciona con cualquier
+reproductor que hable MPRIS**: YouTube normal, YouTube Music, Spotify, una
+pestaña del navegador, un cliente nativo… lo que esté sonando es lo que
+controla. La etiqueta del encabezado del panel muestra la fuente detectada
+(por ejemplo `REPRODUCIENDO · YouTube` o `· YouTube Music`); en navegadores
+se adivina del título de la ventana activa, así que con música en segundo
+plano puede caer al nombre del navegador.
 
 Inspirado en [omaspotify](https://github.com/cempack/omaspotify), reescrito
 para YouTube Music. **Fork de [haripako/omamusic](https://github.com/haripako/omamusic)**
@@ -138,6 +143,8 @@ Puedes reubicarlo después arrastrándolo, o editando
 
 - **Idioma del panel** — por defecto en inglés. El botón **ES** del encabezado
   del panel cambia al español y vuelve (persiste con el ajuste `language`).
+- **Etiqueta de fuente** — el encabezado muestra de dónde suena el audio
+  (`REPRODUCIENDO · YouTube`, `· YouTube Music`, `· Spotify`…).
 - **Clic izquierdo** — abrir/cerrar el panel
 - **Clic central** — reproducir/pausar sin abrir el panel, o iniciar YouTube
   Music cuando no suena nada
@@ -323,8 +330,12 @@ popup with album art, track info, a seekable progress bar, shuffle/repeat,
 playback controls, volume and a live spectrum histogram.
 
 The plugin is **source-independent**: it never launches or requires any
-particular app. Whatever is playing YouTube Music — a native client or a
-browser tab — is what it controls.
+particular app. It is not exclusive to YouTube Music — **it works with any
+MPRIS-speaking player**: plain YouTube, YouTube Music, Spotify, a browser
+tab, a native client… whatever is playing is what it controls. The popup
+header label shows the detected source (e.g. `NOW PLAYING · YouTube` or
+`· YouTube Music`); in browsers it is guessed from the active window title,
+so background music may fall back to the browser name.
 
 Inspired by [omaspotify](https://github.com/cempack/omaspotify), rewritten for
 YouTube Music. **Fork of [haripako/omamusic](https://github.com/haripako/omamusic)**
@@ -438,6 +449,8 @@ You can drag-and-drop it to reposition later, or edit
 
 - **Panel language** — English by default. The **ES** button in the popup
   header switches to Spanish and back (persisted via the `language` setting).
+- **Source label** — the header shows where the audio comes from
+  (`NOW PLAYING · YouTube`, `· YouTube Music`, `· Spotify`…).
 - **Left click** — open/close the popup
 - **Middle click** — play/pause without opening the popup, or start YouTube
   Music when nothing is playing

@@ -39,7 +39,9 @@ Panel {
   // Localized user-facing labels. Declared as readonly properties bound to
   // uiLang so every binding that references them re-evaluates when the
   // language switches (a function-call helper is not dependency-tracked).
-  readonly property string headerLabel: root.uiLang === "ES" ? "REPRODUCIENDO · YOUTUBE MUSIC" : "NOW PLAYING · YOUTUBE MUSIC"
+  readonly property string headerLabel: root.uiLang === "ES"
+    ? "REPRODUCIENDO · " + root.sourceBrand
+    : "NOW PLAYING · " + root.sourceBrand
   readonly property string openLabel: root.uiLang === "ES" ? "Abrir YouTube Music" : "Open YouTube Music"
   readonly property string languageTooltip: root.uiLang === "ES" ? "Idioma: " + root.uiLang + " — clic para cambiar" : "Language: " + root.uiLang + " — click to switch"
   readonly property string themeTooltip: root.uiLang === "ES" ? "Tema del equalizador: " + root.neonTheme + " — clic para cambiar" : "Equalizer theme: " + root.neonTheme + " — click to cycle"
@@ -111,7 +113,20 @@ Panel {
 
   WindowTitles {
     id: windowTitles
-    enabled: root.strictBrowserMatch
+    // Poll while a player exists: `matched` feeds Strict browser match and
+    // `brand` drives the dynamic source label in the header.
+    enabled: root.player !== null
+  }
+
+  // Where the audio actually comes from, for the header label. Native
+  // YouTube Music clients are known by identity; browsers are guessed from
+  // window titles (best effort — the active tab); anything else falls back
+  // to the player identity ("Spotify", "Vivaldi", …).
+  readonly property string sourceBrand: {
+    if (!root.player) return ""
+    if (Model.isNative(root.player, Model.parseNames(root.extraPlayerNames))) return "YouTube Music"
+    if (windowTitles.brand !== "") return windowTitles.brand
+    return root.player.identity || "browser"
   }
 
   readonly property bool playing: player ? player.isPlaying : false
@@ -313,7 +328,7 @@ Panel {
     open: root.opened
     centerOnBar: true
     focusTarget: keyCatcher
-    contentWidth: panel.fittedContentWidth(Style.space(root.player ? 400 : 244))
+    contentWidth: panel.fittedContentWidth(Style.space(root.player ? 440 : 244))
     contentHeight: panel.fittedContentHeight(contentColumn.implicitHeight)
 
     PanelKeyCatcher {
