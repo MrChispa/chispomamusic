@@ -58,7 +58,14 @@ Panel {
   readonly property bool canSeek: player ? (player.canSeek && player.positionSupported && player.length > 0) : false
   // Prefer the player's own volume; fall back to its PipeWire stream so the
   // browser route gets a working slider instead of no slider at all.
-  readonly property bool mprisVolume: player ? player.volumeSupported : false
+  //
+  // Chromium-based browsers advertise volumeSupported and report a fixed
+  // MPRIS Volume (always 1.0), but writes to it are a no-op — the real audio
+  // level lives on the player's PipeWire stream. So MPRIS volume is only
+  // trusted for native clients; browsers always drive the stream.
+  readonly property bool mprisVolume: player
+    ? player.volumeSupported && Model.isNative(player, Model.parseNames(root.extraPlayerNames))
+    : false
   readonly property bool hasVolume: player !== null && root.showVolume
     && (root.mprisVolume || streamVolume.available)
   readonly property real currentVolume: root.mprisVolume
