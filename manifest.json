@@ -5,7 +5,7 @@
   "version": "2.0.0",
   "author": "MrChispa",
   "license": "MIT",
-  "description": "Control de YouTube Music por MPRIS para la barra de Omarchy con equalizador neón en la barra, temas, y volumen corregido para navegadores",
+  "description": "Control de YouTube Music por MPRIS para la barra de Omarchy con equalizador neón, temas y volumen corregido para navegadores. MPRIS YouTube Music controller for the Omarchy bar with a neon equalizer, themes and fixed browser volume.",
   "homepage": "https://github.com/MrChispa/chispomamusic",
   "kinds": [
     "bar-widget"
@@ -15,7 +15,7 @@
   },
   "barWidget": {
     "displayName": "ChispOmaMusic",
-    "description": "Control de YouTube Music con carátula, barra de progreso, controles de reproducción, volumen, enlaces rápidos y equalizador neón",
+    "description": "Control de YouTube Music con carátula, controles, volumen y equalizador neón. / YouTube Music controller with album art, controls, volume and a neon equalizer.",
     "category": "Media",
     "allowMultiple": false,
     "defaultSection": "center",
