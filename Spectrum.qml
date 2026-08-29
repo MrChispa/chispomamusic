@@ -44,9 +44,12 @@ Item {
   }
   onCavaAvailableChanged: if (root.active && root.cavaAvailable) root.levels = []
 
-  // Presence probe, run once at startup.
+  // Presence probe, run once at startup. Must be started explicitly: a
+  // Quickshell Process with no `running` binding does not auto-start (the
+  // original plugin's window-title probe is kicked off the same way).
   Process {
     id: cavaProbe
+    running: true
     command: ["sh", "-c", "command -v cava >/dev/null 2>&1 && echo yes || echo no"]
     stdout: StdioCollector {
       waitForEnd: true
