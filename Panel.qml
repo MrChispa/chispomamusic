@@ -59,6 +59,9 @@ Panel {
   readonly property string repeatPlaylistLabel: root.uiLang === "ES" ? "Repetir lista" : "Repeat playlist"
   readonly property string repeatOffLabel: root.uiLang === "ES" ? "Repetir desactivado" : "Repeat off"
   readonly property string quickLinkTooltipBase: root.uiLang === "ES" ? "Abrir en tu navegador" : "Open in your browser" 
+  readonly property string cavaHintLabel: root.uiLang === "ES"
+    ? "Instala cava para el equalizador real: omarchy pkg add cava"
+    : "Install cava for the real equalizer: omarchy pkg add cava"
 
   // Cycle the panel language (EN <-> ES). Applies instantly for this session
   // and persists like the theme, so the choice survives a restart.
@@ -621,6 +624,34 @@ Panel {
           neon: root.effectiveNeon
           colors: root.effectivePalette
           glowStrength: root.effectiveGlow
+        }
+
+        // Reminder shown while cava is missing: the equalizer degrades to a
+        // decorative animation and the plugin cannot install packages itself.
+        Row {
+          visible: root.player !== null && !spectrum.cavaAvailable
+          width: parent.width
+          spacing: Style.space(6)
+
+          Text {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "\uf05a"
+            color: root.dimForeground
+            font.family: root.contentFontFamily
+            font.pixelSize: Style.font.caption
+          }
+
+          Text {
+            width: parent.width - Style.space(6) - Style.space(14)
+            anchors.verticalCenter: parent.verticalCenter
+            text: root.cavaHintLabel
+            color: root.dimForeground
+            font.family: root.contentFontFamily
+            font.pixelSize: Style.font.caption
+            wrapMode: Text.Wrap
+            elide: Text.ElideRight
+            maximumLineCount: 1
+          }
         }
 
         Column {

@@ -68,9 +68,13 @@ reactiva al audio. Pon `visualizerFallback` en `Nothing` para ocultarla.
 - Una Nerd Font v3 (los iconos usan el rango Material Design)
 - Una fuente de YouTube Music que hable MPRIS — un cliente nativo o una
   pestaña del navegador, ver abajo
-- *Opcional:* [`cava`](https://github.com/karlstav/cava) para el histograma
-  de espectro real. Sin él se muestra la animación idle (ver
-  `visualizerFallback`).
+- [`cava`](https://github.com/karlstav/cava) — **necesario para el
+  equalizador real**. Instálalo con:
+  ```bash
+  omarchy pkg add cava
+  ```
+  Sin él el equalizador muestra una animación decorativa y el panel te lo
+  recuerda (ver `visualizerFallback`).
 
 ### Qué reproductores funcionan
 
@@ -138,6 +142,16 @@ omarchy bar put io.github.mrchispa.chispomamusic
 
 Puedes reubicarlo después arrastrándolo, o editando
 `~/.config/omarchy/shell.json` a mano.
+
+**Para la experiencia completa**, instala `cava` (el equalizador real de
+audio):
+
+```bash
+omarchy pkg add cava
+```
+
+Sin él, el equalizador funciona con una animación decorativa y el panel
+muestra un aviso con el comando.
 
 ### Uso
 
@@ -374,9 +388,13 @@ audio-reactive. Set `visualizerFallback` to `Nothing` to hide it completely.
 - A Nerd Font v3 (the icons use the Material Design range)
 - A YouTube Music source that speaks MPRIS — either a native client or a
   browser tab, see below
-- *Optional:* [`cava`](https://github.com/karlstav/cava) for the real spectrum
-  histogram. Without it the idle animation is shown instead (see
-  `visualizerFallback`).
+- [`cava`](https://github.com/karlstav/cava) — **required for the real
+  equalizer**. Install it with:
+  ```bash
+  omarchy pkg add cava
+  ```
+  Without it the equalizer shows a decorative animation and the popup reminds
+  you (see `visualizerFallback`).
 
 ### Which players work
 
@@ -444,6 +462,15 @@ omarchy bar put io.github.mrchispa.chispomamusic
 
 You can drag-and-drop it to reposition later, or edit
 `~/.config/omarchy/shell.json` by hand.
+
+**For the full experience**, install `cava` (the real audio equalizer):
+
+```bash
+omarchy pkg add cava
+```
+
+Without it the equalizer runs on a decorative animation and the popup shows
+a hint with the command.
 
 ### Usage
 
