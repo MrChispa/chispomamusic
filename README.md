@@ -17,6 +17,25 @@ browser tab — is what it controls.
 Inspired by [omaspotify](https://github.com/cempack/omaspotify), rewritten for
 YouTube Music.
 
+## Neon equalizer
+
+This fork adds a **neon equalizer** to the bar: while music is playing, a row
+of glowing bars powered by `cava` — the same source as the popup histogram —
+sits right next to the icon. Clicking the icon still opens the menu as usual;
+the equalizer is purely decorative and never intercepts clicks. The bars
+reflect *system* audio, exactly like the popup visualizer.
+
+The glow color is set with the `neonColor` setting (`#00e5ff` by default) and
+`neonBarCount` controls how many bars are drawn. Set `barVisualizer` to `false`
+to hide the bar equalizer entirely (the popup histogram is unaffected).
+
+When `cava` is not installed the equalizer does not go blank: by default it
+shows a soft **idle animation** instead — clearly decorative, not
+audio-reactive. Set `visualizerFallback` to `Nothing` to hide it completely.
+
+This is a fork of [haripako/omamusic](https://github.com/haripako/omamusic)
+with the neon enhancements.
+
 ## Requirements
 
 - **Omarchy** (Quickshell-based desktop)
@@ -75,7 +94,7 @@ under the track so it is never ambiguous which session you are driving.
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/haripako/omamusic.git
+omarchy plugin add https://github.com/MrChispa/omamusic.git
 ```
 
 The plugin is **disabled by default** so you can read the code first:
@@ -242,7 +261,8 @@ Then remove the entry from `~/.config/omarchy/shell.json`.
 
 ## Author
 
-Haripako — [@haripako](https://twitter.com/haripako)
+Fork with neon equalizer by MrChispa — original by Haripako
+([@haripako](https://twitter.com/haripako))
 
 ## License
 

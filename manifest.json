@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "id": "io.github.haripako.omamusic",
   "name": "Omamusic",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "Haripako",
   "license": "MIT",
-  "description": "YouTube Music MPRIS controller with album art, seekable progress bar, shuffle/repeat, and volume in a popup panel",
-  "homepage": "https://github.com/haripako/omamusic",
+  "description": "YouTube Music MPRIS controller with a neon equalizer in the bar, album art, seekable progress bar, shuffle/repeat, and volume in a popup panel",
+  "homepage": "https://github.com/MrChispa/omamusic",
   "kinds": ["bar-widget"],
   "entryPoints": {
     "barWidget": "Panel.qml"
@@ -26,7 +26,11 @@
       "showVisualizer": true,
       "launchCommand": "",
       "quickLinks": "Liked songs|https://music.youtube.com/playlist?list=LM, Library|https://music.youtube.com/library",
-      "quickLinkBehavior": "Focus if open"
+      "quickLinkBehavior": "Focus if open",
+      "barVisualizer": true,
+      "neonColor": "#00e5ff",
+      "neonBarCount": 9,
+      "visualizerFallback": "Idle animation"
     },
     "schema": [
       {
@@ -93,6 +97,35 @@
         "label": "Launch command",
         "description": "Command run by the play button when nothing is playing. Empty uses the native client if installed, otherwise music.youtube.com",
         "defaultValue": ""
+      },
+      {
+        "key": "barVisualizer",
+        "type": "boolean",
+        "label": "Bar neon equalizer",
+        "description": "Show a neon equalizer in the bar while music is playing",
+        "defaultValue": true
+      },
+      {
+        "key": "neonColor",
+        "type": "string",
+        "label": "Neon color",
+        "description": "Hex color of the neon equalizer glow",
+        "defaultValue": "#00e5ff"
+      },
+      {
+        "key": "neonBarCount",
+        "type": "number",
+        "label": "Neon bar count",
+        "description": "Number of bars in the neon equalizer",
+        "defaultValue": 9
+      },
+      {
+        "key": "visualizerFallback",
+        "type": "enum",
+        "options": ["Idle animation", "Nothing"],
+        "label": "Without cava",
+        "description": "What the equalizer shows when cava is not installed: a decorative idle animation, or nothing",
+        "defaultValue": "Idle animation"
       }
     ]
   }

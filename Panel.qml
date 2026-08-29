@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Services.Mpris
 import qs.Commons
@@ -23,6 +24,12 @@ Panel {
   readonly property var quickLinkList: Model.parseQuickLinks(root.quickLinks)
   readonly property string quickLinkBehavior: root.setting("quickLinkBehavior", "Focus if open")
   readonly property bool focusFirst: String(root.quickLinkBehavior).toLowerCase().indexOf("always") === -1
+
+  // Neon equalizer settings.
+  readonly property bool barVisualizer: root.setting("barVisualizer", true)
+  readonly property color neonColor: root.setting("neonColor", "#00e5ff")
+  readonly property int neonBarCount: root.setting("neonBarCount", 9)
+  readonly property string visualizerFallback: root.setting("visualizerFallback", "Idle animation")
 
   // Raises an existing YouTube Music window instead of piling up duplicate
   // tabs. The title must *end* with "YouTube Music" so a page merely
@@ -69,7 +76,13 @@ Panel {
   readonly property color subtleBorder: Style.normalBorderFor(contentForeground, Color.accent)
   readonly property string contentFontFamily: bar ? bar.fontFamily : Style.font.family
 
-  implicitWidth: button.implicitWidth
+  // The bar equalizer shows whenever playback is live and the setting is on;
+  // Spectrum owns the data, so "has signal" is the source's verdict.
+  readonly property bool showBarVisualizer: root.playing && root.barVisualizer && spectrum.hasSignal
+
+  implicitWidth: root.showBarVisualizer
+    ? button.implicitWidth + barVisualizerRow.implicitWidth
+    : button.implicitWidth
   implicitHeight: button.implicitHeight
 
   // MPRIS only pushes position on seek, so poll while playing to keep the
@@ -95,6 +108,16 @@ Panel {
   StreamVolume {
     id: streamVolume
     appHint: root.player ? root.player.identity : ""
+  }
+
+  // Shared spectrum source driving both the bar equalizer and the popup
+  // histogram. Active whenever playback is live and either visualizer wants
+  // data; Spectrum itself decides between real cava and the idle fallback.
+  Spectrum {
+    id: spectrum
+    active: root.playing && (root.barVisualizer || (root.showVisualizer && root.opened))
+    barCount: root.neonBarCount
+    useCavaFallback: String(root.visualizerFallback).toLowerCase().indexOf("idle") !== -1
   }
 
   // MPRIS can only talk to a player that already exists, so starting from an
@@ -125,6 +148,14 @@ Panel {
     root.close()
   }
 
+  function openHome() {
+    // Focus an existing YouTube Music window, then fall back to opening the
+    // site — the same focus-first pattern the quick links use.
+    var open = "exec xdg-open https://music.youtube.com"
+    Util.execDetached(root.focusFirst ? (root.focusCommand + " || " + open) : open)
+    root.close()
+  }
+
   function cycleLoop() {
     if (!root.player || !root.player.loopSupported) return
     if (root.player.loopState === MprisLoopState.None) root.player.loopState = MprisLoopState.Playlist
@@ -134,7 +165,9 @@ Panel {
 
   BarIconButton {
     id: button
-    anchors.fill: parent
+    anchors.left: parent.left
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
     bar: root.bar
     text: "\udb81\uddc3"
     active: false
@@ -162,6 +195,20 @@ Panel {
         wheel.accepted = true
       }
     }
+  }
+
+  // Neon equalizer beside the icon. Pure rendering and click-through: `enabled`
+  // stays false so the button above remains the click target for the popup.
+  BarVisualizer {
+    id: barVisualizerRow
+    anchors.left: button.right
+    anchors.leftMargin: Style.space(3)
+    anchors.verticalCenter: parent.verticalCenter
+    enabled: false
+    visible: root.showBarVisualizer
+    levels: spectrum.levels
+    neon: root.neonColor
+    barCount: root.neonBarCount
   }
 
   KeyboardPanel {
@@ -217,6 +264,62 @@ Panel {
         width: parent.width
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: Style.space(10)
+
+        RowLayout {
+          visible: root.player !== null
+          width: parent.width
+          spacing: Style.space(8)
+
+          Rectangle {
+            id: nowPlayingDot
+            Layout.alignment: Qt.AlignVCenter
+            width: 6
+            height: 6
+            radius: 3
+            color: root.neonColor
+            layer.enabled: true
+            layer.samples: 4
+            layer.effect: MultiEffect {
+              blurEnabled: true
+              blur: 1.0
+              blurMax: 24
+            }
+          }
+
+          Text {
+            Layout.alignment: Qt.AlignVCenter
+            text: "NOW PLAYING · YOUTUBE MUSIC"
+            color: root.dimForeground
+            font.family: root.contentFontFamily
+            font.pixelSize: Style.font.caption
+            font.letterSpacing: 1
+          }
+
+          Item { Layout.fillWidth: true }
+
+          Text {
+            Layout.alignment: Qt.AlignVCenter
+            visible: root.sourceLabel !== ""
+            text: root.sourceLabel
+            color: root.dimForeground
+            font.family: root.contentFontFamily
+            font.pixelSize: Style.font.caption
+            elide: Text.ElideRight
+          }
+
+          PanelActionButton {
+            Layout.alignment: Qt.AlignVCenter
+            iconText: "\uf08e"
+            tooltipText: "Open YouTube Music"
+            foreground: root.dimForeground
+            hoverColor: root.neonColor
+            fontFamily: root.contentFontFamily
+            fontSize: Style.font.caption
+            size: Style.space(22)
+            bordered: false
+            onClicked: root.openHome()
+          }
+        }
 
         Row {
           visible: root.player !== null
@@ -369,8 +472,9 @@ Panel {
 
         Visualizer {
           width: parent.width
-          barColor: Color.accent
-          active: root.showVisualizer && root.opened && root.playing
+          visible: root.showVisualizer && spectrum.levels.length > 0
+          levels: spectrum.levels
+          neon: root.neonColor
         }
 
         Column {
