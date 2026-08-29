@@ -36,10 +36,27 @@ Panel {
   // cycles it and persists through the canonical widget-setting channel.
   readonly property string uiLang: root.setting("language", "EN")
 
-  // Pick the English or Spanish copy for a user-facing string.
-  function tr(en, es) {
-    return root.uiLang === "ES" ? es : en
-  }
+  // Localized user-facing labels. Declared as readonly properties bound to
+  // uiLang so every binding that references them re-evaluates when the
+  // language switches (a function-call helper is not dependency-tracked).
+  readonly property string headerLabel: root.uiLang === "ES" ? "REPRODUCIENDO · YOUTUBE MUSIC" : "NOW PLAYING · YOUTUBE MUSIC"
+  readonly property string openLabel: root.uiLang === "ES" ? "Abrir YouTube Music" : "Open YouTube Music"
+  readonly property string languageTooltip: root.uiLang === "ES" ? "Idioma: " + root.uiLang + " — clic para cambiar" : "Language: " + root.uiLang + " — click to switch"
+  readonly property string themeTooltip: root.uiLang === "ES" ? "Tema del equalizador: " + root.neonTheme + " — clic para cambiar" : "Equalizer theme: " + root.neonTheme + " — click to cycle"
+  readonly property string idleLabel: root.uiLang === "ES" ? "Nada sonando" : "Nothing playing"
+  readonly property string playButtonLabel: root.uiLang === "ES" ? "Reproducir en YouTube Music" : "Play on YouTube Music"
+  readonly property string launchTooltip: root.uiLang === "ES" ? "Lanza el cliente nativo, o abre music.youtube.com" : "Launch the native client, or open music.youtube.com"
+  readonly property string shuffleOnLabel: root.uiLang === "ES" ? "Aleatorio activado" : "Shuffle on"
+  readonly property string shuffleOffLabel: root.uiLang === "ES" ? "Aleatorio desactivado" : "Shuffle off"
+  readonly property string prevLabel: root.uiLang === "ES" ? "Canción anterior" : "Previous track"
+  readonly property string pauseLabel: root.uiLang === "ES" ? "Pausar" : "Pause"
+  readonly property string playLabel: root.uiLang === "ES" ? "Reproducir" : "Play"
+  readonly property string nextLabel: root.uiLang === "ES" ? "Siguiente canción" : "Next track"
+  readonly property string repeatBaseLabel: root.uiLang === "ES" ? "Repetir" : "Repeat"
+  readonly property string repeatTrackLabel: root.uiLang === "ES" ? "Repetir canción" : "Repeat track"
+  readonly property string repeatPlaylistLabel: root.uiLang === "ES" ? "Repetir lista" : "Repeat playlist"
+  readonly property string repeatOffLabel: root.uiLang === "ES" ? "Repetir desactivado" : "Repeat off"
+  readonly property string quickLinkTooltipBase: root.uiLang === "ES" ? "Abrir en tu navegador" : "Open in your browser" 
 
   // Cycle the panel language (EN <-> ES). Applies instantly for this session
   // and persists like the theme, so the choice survives a restart.
@@ -366,7 +383,7 @@ Panel {
 
           Text {
             Layout.alignment: Qt.AlignVCenter
-            text: root.tr("NOW PLAYING · YOUTUBE MUSIC", "REPRODUCIENDO · YOUTUBE MUSIC")
+            text: root.headerLabel
             color: root.dimForeground
             font.family: root.contentFontFamily
             font.pixelSize: Style.font.caption
@@ -378,9 +395,7 @@ Panel {
           Button {
             Layout.alignment: Qt.AlignVCenter
             text: root.uiLang === "ES" ? "EN" : "ES"
-            tooltipText: root.tr(
-              "Language: " + root.uiLang + " — click to switch",
-              "Idioma: " + root.uiLang + " — clic para cambiar")
+            tooltipText: root.languageTooltip
             foreground: root.dimForeground
             accent: root.effectiveNeon
             fontFamily: root.contentFontFamily
@@ -394,9 +409,7 @@ Panel {
           PanelActionButton {
             Layout.alignment: Qt.AlignVCenter
             iconText: "\uf53f"
-            tooltipText: root.tr(
-              "Equalizer theme: " + root.neonTheme + " — click to cycle",
-              "Tema del equalizador: " + root.neonTheme + " — clic para cambiar")
+            tooltipText: root.themeTooltip
             foreground: root.dimForeground
             hoverColor: root.effectiveNeon
             fontFamily: root.contentFontFamily
@@ -419,7 +432,7 @@ Panel {
           PanelActionButton {
             Layout.alignment: Qt.AlignVCenter
             iconText: "\uf08e"
-            tooltipText: root.tr("Open YouTube Music", "Abrir YouTube Music")
+            tooltipText: root.openLabel
             foreground: root.dimForeground
             hoverColor: root.effectiveNeon
             fontFamily: root.contentFontFamily
@@ -555,7 +568,7 @@ Panel {
 
             Text {
               anchors.verticalCenter: parent.verticalCenter
-              text: root.tr("Nothing playing", "Nada sonando")
+              text: root.idleLabel
               color: root.dimForeground
               font.family: root.contentFontFamily
               font.pixelSize: Style.font.body
@@ -566,8 +579,8 @@ Panel {
             width: parent.width
             bordered: true
             iconText: "\uf04b"
-            text: root.tr("Play on YouTube Music", "Reproducir en YouTube Music")
-            tooltipText: root.tr("Launch the native client, or open music.youtube.com", "Lanza el cliente nativo, o abre music.youtube.com")
+            text: root.playButtonLabel
+            tooltipText: root.launchTooltip
             foreground: root.contentForeground
             accent: Color.accent
             fontFamily: root.contentFontFamily
@@ -644,7 +657,7 @@ Panel {
               anchors.verticalCenter: parent.verticalCenter
               visible: root.player && root.player.shuffleSupported
               iconText: "\udb81\udc9d"
-              tooltipText: root.player && root.player.shuffle ? root.tr("Shuffle on", "Aleatorio activado") : root.tr("Shuffle off", "Aleatorio desactivado")
+              tooltipText: root.player && root.player.shuffle ? root.shuffleOnLabel : root.shuffleOffLabel
               foreground: root.player && root.player.shuffle ? Color.accent : root.dimForeground
               hoverColor: Color.accent
               fontFamily: root.contentFontFamily
@@ -657,7 +670,7 @@ Panel {
             PanelActionButton {
               anchors.verticalCenter: parent.verticalCenter
               iconText: ""
-              tooltipText: root.tr("Previous track", "Canción anterior")
+              tooltipText: root.prevLabel
               foreground: root.contentForeground
               hoverColor: Color.accent
               fontFamily: root.contentFontFamily
@@ -671,7 +684,7 @@ Panel {
             PanelActionButton {
               anchors.verticalCenter: parent.verticalCenter
               iconText: root.playing ? "" : ""
-              tooltipText: root.playing ? root.tr("Pause", "Pausar") : root.tr("Play", "Reproducir")
+              tooltipText: root.playing ? root.pauseLabel : root.playLabel
               foreground: Color.accent
               hoverColor: Color.accent
               fontFamily: root.contentFontFamily
@@ -685,7 +698,7 @@ Panel {
             PanelActionButton {
               anchors.verticalCenter: parent.verticalCenter
               iconText: ""
-              tooltipText: root.tr("Next track", "Siguiente canción")
+              tooltipText: root.nextLabel
               foreground: root.contentForeground
               hoverColor: Color.accent
               fontFamily: root.contentFontFamily
@@ -701,10 +714,10 @@ Panel {
               visible: root.player && root.player.loopSupported
               iconText: root.player && root.player.loopState === MprisLoopState.Track ? "\udb81\udc58" : "\udb81\udc56"
               tooltipText: {
-                if (!root.player) return root.tr("Repeat", "Repetir")
-                if (root.player.loopState === MprisLoopState.Track) return root.tr("Repeat track", "Repetir canción")
-                if (root.player.loopState === MprisLoopState.Playlist) return root.tr("Repeat playlist", "Repetir lista")
-                return root.tr("Repeat off", "Repetir desactivado")
+                if (!root.player) return root.repeatBaseLabel
+                if (root.player.loopState === MprisLoopState.Track) return root.repeatTrackLabel
+                if (root.player.loopState === MprisLoopState.Playlist) return root.repeatPlaylistLabel
+                return root.repeatOffLabel
               }
               foreground: root.player && root.player.loopState !== MprisLoopState.None ? Color.accent : root.dimForeground
               hoverColor: Color.accent
@@ -776,8 +789,8 @@ Panel {
               bordered: true
               text: modelData.name
               tooltipText: root.quickLinkList.length <= 9 && index < 9
-                ? root.tr("Open in your browser (" + (index + 1) + ")", "Abrir en tu navegador (" + (index + 1) + ")")
-                : root.tr("Open in your browser", "Abrir en tu navegador")
+                ? root.quickLinkTooltipBase + " (" + (index + 1) + ")"
+                : root.quickLinkTooltipBase
               foreground: root.contentForeground
               accent: Color.accent
               fontFamily: root.contentFontFamily
