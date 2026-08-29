@@ -33,7 +33,8 @@
       "neonColor": "#00e5ff",
       "neonBarCount": 10,
       "visualizerFallback": "Idle animation",
-      "neonTheme": "Auto"
+      "neonTheme": "Auto",
+      "language": "EN"
     },
     "schema": [
       {
@@ -151,6 +152,17 @@
         ],
         "defaultValue": "Auto",
         "description": "Auto sigue el accent del tema activo. Cyberpunk usa una paleta neón multicolor con resplandor intenso. Minimalist usa un resplandor neutro suave."
+      },
+      {
+        "key": "language",
+        "type": "enum",
+        "label": "Idioma / Language",
+        "options": [
+          "EN",
+          "ES"
+        ],
+        "defaultValue": "EN",
+        "description": "Idioma de la interfaz del panel. EN por defecto; el botón ES/EN del encabezado lo cambia al vuelo."
       }
     ]
   }

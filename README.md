@@ -136,6 +136,8 @@ Puedes reubicarlo después arrastrándolo, o editando
 
 ### Uso
 
+- **Idioma del panel** — por defecto en inglés. El botón **ES** del encabezado
+  del panel cambia al español y vuelve (persiste con el ajuste `language`).
 - **Clic izquierdo** — abrir/cerrar el panel
 - **Clic central** — reproducir/pausar sin abrir el panel, o iniciar YouTube
   Music cuando no suena nada
@@ -168,7 +170,8 @@ Dentro del panel:
 | `Escape` | Cerrar el panel |
 | `Tab` | Cambiar al panel adyacente |
 
-Atajo global sugerido (`~/.config/hypr/bindings.lua`):
+Atajo global **opcional** — no se activa automáticamente; si quieres uno,
+añádelo tú en `~/.config/hypr/bindings.lua`:
 
 ```lua
 o.bind("SUPER + M", "Toggle ChispOmaMusic", "omarchy-shell io.github.mrchispa.chispomamusic toggle")
@@ -203,6 +206,7 @@ entrada del widget en `~/.config/omarchy/shell.json` (settings planos):
 | Ajuste | Por defecto | Qué hace |
 |--------|-------------|----------|
 | `neonTheme` | `Auto` | Tema del equalizador: `Auto`, `Cyberpunk` o `Minimalist` |
+| `language` | `EN` | Idioma de la interfaz del panel: `EN` o `ES` |
 | `playerSource` | `Auto` | `Auto`, `Native app` o `Browser` — dónde se controla la reproducción |
 | `strictBrowserMatch` | `false` | Exige además una ventana abierta titulada *YouTube Music* (solo Hyprland) |
 | `extraPlayerNames` | `""` | Identidades/entradas de escritorio MPRIS separadas por comas para tratar también como YouTube Music |
@@ -432,6 +436,8 @@ You can drag-and-drop it to reposition later, or edit
 
 ### Usage
 
+- **Panel language** — English by default. The **ES** button in the popup
+  header switches to Spanish and back (persisted via the `language` setting).
 - **Left click** — open/close the popup
 - **Middle click** — play/pause without opening the popup, or start YouTube
   Music when nothing is playing
@@ -463,7 +469,8 @@ Inside the popup:
 | `Escape` | Close popup |
 | `Tab` | Switch to adjacent panel |
 
-Suggested global keybinding (`~/.config/hypr/bindings.lua`):
+Optional global keybinding — not enabled automatically; if you want one, add
+it yourself in `~/.config/hypr/bindings.lua`:
 
 ```lua
 o.bind("SUPER + M", "Toggle ChispOmaMusic", "omarchy-shell io.github.mrchispa.chispomamusic toggle")
@@ -497,6 +504,7 @@ widget's entry in `~/.config/omarchy/shell.json` (flat settings):
 | Setting | Default | What it does |
 |---------|---------|--------------|
 | `neonTheme` | `Auto` | Equalizer theme: `Auto`, `Cyberpunk` or `Minimalist` |
+| `language` | `EN` | Panel UI language: `EN` or `ES` |
 | `playerSource` | `Auto` | `Auto`, `Native app` or `Browser` — where playback is controlled |
 | `strictBrowserMatch` | `false` | Also require an open window titled *YouTube Music* (Hyprland only) |
 | `extraPlayerNames` | `""` | Comma-separated MPRIS identities/desktop entries to also treat as YouTube Music |

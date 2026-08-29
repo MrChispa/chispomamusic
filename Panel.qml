@@ -32,6 +32,27 @@ Panel {
   readonly property string visualizerFallback: root.setting("visualizerFallback", "Idle animation")
   readonly property string neonTheme: root.setting("neonTheme", "Auto")
 
+  // Panel UI language. Defaults to English; the header "ES"/"EN" button
+  // cycles it and persists through the canonical widget-setting channel.
+  readonly property string uiLang: root.setting("language", "EN")
+
+  // Pick the English or Spanish copy for a user-facing string.
+  function tr(en, es) {
+    return root.uiLang === "ES" ? es : en
+  }
+
+  // Cycle the panel language (EN <-> ES). Applies instantly for this session
+  // and persists like the theme, so the choice survives a restart.
+  function cycleLanguage() {
+    var next = root.uiLang === "ES" ? "EN" : "ES"
+    var s = root.settings || {}
+    var updated = {}
+    for (var k in s) updated[k] = s[k]
+    updated.language = next
+    root.settings = updated
+    Util.execDetached("omarchy bar set io.github.mrchispa.chispomamusic language " + next)
+  }
+
   // Equalizer theme resolution. Auto follows the active theme accent;
   // Cyberpunk uses a multi-color neon palette with a strong glow; Minimalist
   // uses a soft neutral glow.
@@ -345,7 +366,7 @@ Panel {
 
           Text {
             Layout.alignment: Qt.AlignVCenter
-            text: "NOW PLAYING · YOUTUBE MUSIC"
+            text: root.tr("NOW PLAYING · YOUTUBE MUSIC", "REPRODUCIENDO · YOUTUBE MUSIC")
             color: root.dimForeground
             font.family: root.contentFontFamily
             font.pixelSize: Style.font.caption
@@ -354,10 +375,28 @@ Panel {
 
           Item { Layout.fillWidth: true }
 
+          Button {
+            Layout.alignment: Qt.AlignVCenter
+            text: root.uiLang === "ES" ? "EN" : "ES"
+            tooltipText: root.tr(
+              "Language: " + root.uiLang + " — click to switch",
+              "Idioma: " + root.uiLang + " — clic para cambiar")
+            foreground: root.dimForeground
+            accent: root.effectiveNeon
+            fontFamily: root.contentFontFamily
+            fontSize: Style.font.caption
+            horizontalPadding: Math.max(2, Style.space(3))
+            verticalPadding: Math.max(1, Style.space(1))
+            bordered: false
+            onClicked: root.cycleLanguage()
+          }
+
           PanelActionButton {
             Layout.alignment: Qt.AlignVCenter
             iconText: "\uf53f"
-            tooltipText: "Equalizer theme: " + root.neonTheme + " — click to cycle"
+            tooltipText: root.tr(
+              "Equalizer theme: " + root.neonTheme + " — click to cycle",
+              "Tema del equalizador: " + root.neonTheme + " — clic para cambiar")
             foreground: root.dimForeground
             hoverColor: root.effectiveNeon
             fontFamily: root.contentFontFamily
@@ -380,7 +419,7 @@ Panel {
           PanelActionButton {
             Layout.alignment: Qt.AlignVCenter
             iconText: "\uf08e"
-            tooltipText: "Open YouTube Music"
+            tooltipText: root.tr("Open YouTube Music", "Abrir YouTube Music")
             foreground: root.dimForeground
             hoverColor: root.effectiveNeon
             fontFamily: root.contentFontFamily
@@ -516,7 +555,7 @@ Panel {
 
             Text {
               anchors.verticalCenter: parent.verticalCenter
-              text: "Nothing playing"
+              text: root.tr("Nothing playing", "Nada sonando")
               color: root.dimForeground
               font.family: root.contentFontFamily
               font.pixelSize: Style.font.body
@@ -527,8 +566,8 @@ Panel {
             width: parent.width
             bordered: true
             iconText: "\uf04b"
-            text: "Play on YouTube Music"
-            tooltipText: "Launch the native client, or open music.youtube.com"
+            text: root.tr("Play on YouTube Music", "Reproducir en YouTube Music")
+            tooltipText: root.tr("Launch the native client, or open music.youtube.com", "Lanza el cliente nativo, o abre music.youtube.com")
             foreground: root.contentForeground
             accent: Color.accent
             fontFamily: root.contentFontFamily
@@ -605,7 +644,7 @@ Panel {
               anchors.verticalCenter: parent.verticalCenter
               visible: root.player && root.player.shuffleSupported
               iconText: "\udb81\udc9d"
-              tooltipText: root.player && root.player.shuffle ? "Shuffle on" : "Shuffle off"
+              tooltipText: root.player && root.player.shuffle ? root.tr("Shuffle on", "Aleatorio activado") : root.tr("Shuffle off", "Aleatorio desactivado")
               foreground: root.player && root.player.shuffle ? Color.accent : root.dimForeground
               hoverColor: Color.accent
               fontFamily: root.contentFontFamily
@@ -618,7 +657,7 @@ Panel {
             PanelActionButton {
               anchors.verticalCenter: parent.verticalCenter
               iconText: ""
-              tooltipText: "Previous track"
+              tooltipText: root.tr("Previous track", "Canción anterior")
               foreground: root.contentForeground
               hoverColor: Color.accent
               fontFamily: root.contentFontFamily
@@ -632,7 +671,7 @@ Panel {
             PanelActionButton {
               anchors.verticalCenter: parent.verticalCenter
               iconText: root.playing ? "" : ""
-              tooltipText: root.playing ? "Pause" : "Play"
+              tooltipText: root.playing ? root.tr("Pause", "Pausar") : root.tr("Play", "Reproducir")
               foreground: Color.accent
               hoverColor: Color.accent
               fontFamily: root.contentFontFamily
@@ -646,7 +685,7 @@ Panel {
             PanelActionButton {
               anchors.verticalCenter: parent.verticalCenter
               iconText: ""
-              tooltipText: "Next track"
+              tooltipText: root.tr("Next track", "Siguiente canción")
               foreground: root.contentForeground
               hoverColor: Color.accent
               fontFamily: root.contentFontFamily
@@ -662,10 +701,10 @@ Panel {
               visible: root.player && root.player.loopSupported
               iconText: root.player && root.player.loopState === MprisLoopState.Track ? "\udb81\udc58" : "\udb81\udc56"
               tooltipText: {
-                if (!root.player) return "Repeat"
-                if (root.player.loopState === MprisLoopState.Track) return "Repeat track"
-                if (root.player.loopState === MprisLoopState.Playlist) return "Repeat playlist"
-                return "Repeat off"
+                if (!root.player) return root.tr("Repeat", "Repetir")
+                if (root.player.loopState === MprisLoopState.Track) return root.tr("Repeat track", "Repetir canción")
+                if (root.player.loopState === MprisLoopState.Playlist) return root.tr("Repeat playlist", "Repetir lista")
+                return root.tr("Repeat off", "Repetir desactivado")
               }
               foreground: root.player && root.player.loopState !== MprisLoopState.None ? Color.accent : root.dimForeground
               hoverColor: Color.accent
@@ -737,8 +776,8 @@ Panel {
               bordered: true
               text: modelData.name
               tooltipText: root.quickLinkList.length <= 9 && index < 9
-                ? "Open in your browser (" + (index + 1) + ")"
-                : "Open in your browser"
+                ? root.tr("Open in your browser (" + (index + 1) + ")", "Abrir en tu navegador (" + (index + 1) + ")")
+                : root.tr("Open in your browser", "Abrir en tu navegador")
               foreground: root.contentForeground
               accent: Color.accent
               fontFamily: root.contentFontFamily
