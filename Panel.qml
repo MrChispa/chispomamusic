@@ -111,11 +111,18 @@ Panel {
     extraPlayerNames: root.extraPlayerNames
   })
 
+  // Propagated by signal, not binding: QML bindings in this runtime do not
+  // track property reads on child objects, so reading windowTitles.brand from
+  // a parent binding would never update. The handler writes a root property
+  // that everything else binds to.
+  property string detectedBrand: ""
+
   WindowTitles {
     id: windowTitles
     // Poll while a player exists: `matched` feeds Strict browser match and
     // `brand` drives the dynamic source label in the header.
     enabled: root.player !== null
+    onBrandChanged: root.detectedBrand = windowTitles.brand
   }
 
   // Where the audio actually comes from, for the header label. Native
@@ -125,7 +132,7 @@ Panel {
   readonly property string sourceBrand: {
     if (!root.player) return ""
     if (Model.isNative(root.player, Model.parseNames(root.extraPlayerNames))) return "YouTube Music"
-    if (windowTitles.brand !== "") return windowTitles.brand
+    if (root.detectedBrand !== "") return root.detectedBrand
     return root.player.identity || "browser"
   }
 
