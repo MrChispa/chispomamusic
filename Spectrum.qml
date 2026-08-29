@@ -29,10 +29,19 @@ Item {
   property var levels: []
   readonly property bool hasSignal: levels.length > 0
 
+  // Per-band smoothed state for the idle fallback, so it behaves like a real
+  // spectrum analyzer (peaks hit and decay) instead of a canned wave.
+  property var idleState: []
+
   // Detected once at startup; gates the real cava process.
   property bool cavaAvailable: false
 
-  onActiveChanged: if (!root.active) root.levels = []
+  onActiveChanged: {
+    if (!root.active) {
+      root.levels = []
+      root.idleState = []
+    }
+  }
   onCavaAvailableChanged: if (root.active && root.cavaAvailable) root.levels = []
 
   // Presence probe, run once at startup.
@@ -78,8 +87,10 @@ Item {
     }
   }
 
-  // Decorative fallback: smooth pseudo bars from a fixed sine-based formula,
-  // so each band drifts at its own pace and the row looks alive.
+  // Decorative fallback: per-band "peak and decay" random walk, so the row
+  // looks like a real spectrum analyzer rather than a traveling wave. Random
+  // bands get struck with a peak (neighbours echo it), and every band decays
+  // toward a slowly breathing floor.
   Timer {
     id: idleTimer
     interval: 90
@@ -90,11 +101,32 @@ Item {
   }
 
   function generateIdleLevels() {
+    // Prime per-band state on first use.
+    if (root.idleState.length !== root.barCount) {
+      var seed = []
+      for (var s = 0; s < root.barCount; s++) seed.push(0.03 + Math.random() * 0.12)
+      root.idleState = seed
+    }
+
+    // Occasionally strike a random band; neighbours echo it, the way audio
+    // peaks bleed into adjacent spectrum bins.
+    if (Math.random() < 0.18) {
+      var hit = Math.floor(Math.random() * root.barCount)
+      root.idleState[hit] = Math.min(1, root.idleState[hit] + 0.55 + Math.random() * 0.45)
+      if (hit > 0) root.idleState[hit - 1] = Math.min(1, root.idleState[hit - 1] + 0.28 + Math.random() * 0.15)
+      if (hit < root.barCount - 1) root.idleState[hit + 1] = Math.min(1, root.idleState[hit + 1] + 0.28 + Math.random() * 0.15)
+    }
+
+    // Decay every band toward a low floor; the floor breathes a little so the
+    // bottom is never dead-still.
     var t = Date.now() / 1000
+    var floor = 0.04 + 0.02 * Math.sin(t * 1.7)
     var out = []
     for (var i = 0; i < root.barCount; i++) {
-      var v = 0.22 + 0.30 * Math.sin(t * 2.1 + i * 0.85) + 0.18 * Math.sin(t * 4.7 + i * 0.35)
-      out.push(Math.max(0.05, Math.min(1, v)))
+      var v = root.idleState[i] * 0.84 + floor * 0.16
+      v = Math.max(0.02, Math.min(1, v))
+      root.idleState[i] = v
+      out.push(v)
     }
     return out
   }
