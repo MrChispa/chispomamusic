@@ -275,7 +275,7 @@ Panel {
     open: root.opened
     centerOnBar: true
     focusTarget: keyCatcher
-    contentWidth: panel.fittedContentWidth(Style.space(root.player ? 352 : 244))
+    contentWidth: panel.fittedContentWidth(Style.space(root.player ? 400 : 244))
     contentHeight: panel.fittedContentHeight(contentColumn.implicitHeight)
 
     PanelKeyCatcher {
