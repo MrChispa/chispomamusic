@@ -28,7 +28,7 @@ Panel {
   // Neon equalizer settings.
   readonly property bool barVisualizer: root.setting("barVisualizer", true)
   readonly property color neonColor: root.setting("neonColor", "#00e5ff")
-  readonly property int neonBarCount: root.setting("neonBarCount", 9)
+  readonly property int neonBarCount: root.setting("neonBarCount", 10)
   readonly property string visualizerFallback: root.setting("visualizerFallback", "Idle animation")
 
   // Raises an existing YouTube Music window instead of piling up duplicate
