@@ -32,7 +32,8 @@
       "barVisualizer": true,
       "neonColor": "#00e5ff",
       "neonBarCount": 10,
-      "visualizerFallback": "Idle animation"
+      "visualizerFallback": "Idle animation",
+      "neonTheme": "Auto"
     },
     "schema": [
       {
@@ -138,6 +139,18 @@
         "label": "Without cava",
         "description": "What the equalizer shows when cava is not installed: a decorative idle animation, or nothing",
         "defaultValue": "Idle animation"
+      },
+      {
+        "key": "neonTheme",
+        "type": "enum",
+        "label": "Equalizer theme",
+        "options": [
+          "Auto",
+          "Cyberpunk",
+          "Minimalist"
+        ],
+        "defaultValue": "Auto",
+        "description": "Auto follows the active theme accent. Cyberpunk uses a multi-color neon palette with a strong glow. Minimalist uses a soft neutral glow."
       }
     ]
   }

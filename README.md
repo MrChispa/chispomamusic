@@ -25,7 +25,15 @@ sits right next to the icon. Clicking the icon still opens the menu as usual;
 the equalizer is purely decorative and never intercepts clicks. The bars
 reflect *system* audio, exactly like the popup visualizer.
 
-The glow color is set with the `neonColor` setting (`#00e5ff` by default) and
+The look is set with the `neonTheme` setting:
+
+- **Auto** (default) — follows the active theme accent, so the equalizer
+  matches whatever theme you switch to. If you pin an explicit `neonColor` in
+  `shell.json`, that wins over the accent.
+- **Cyberpunk** — a multi-color neon palette (cyan, magenta, purple, green)
+  with a strong glow.
+- **Minimalist** — a soft neutral glow in the theme's foreground.
+
 `neonBarCount` controls how many bars are drawn. Set `barVisualizer` to `false`
 to hide the bar equalizer entirely (the popup histogram is unaffected).
 

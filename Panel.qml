@@ -30,6 +30,33 @@ Panel {
   readonly property color neonColor: root.setting("neonColor", "#00e5ff")
   readonly property int neonBarCount: root.setting("neonBarCount", 10)
   readonly property string visualizerFallback: root.setting("visualizerFallback", "Idle animation")
+  readonly property string neonTheme: root.setting("neonTheme", "Auto")
+
+  // Equalizer theme resolution. Auto follows the active theme accent;
+  // Cyberpunk uses a multi-color neon palette with a strong glow; Minimalist
+  // uses a soft neutral glow.
+  readonly property string neonThemeKey: String(root.neonTheme).toLowerCase()
+  readonly property bool cyberpunkTheme: root.neonThemeKey.indexOf("cyber") !== -1
+  readonly property bool minimalTheme: root.neonThemeKey.indexOf("minimal") !== -1
+
+  // Auto follows the active theme accent — unless the user pinned an explicit
+  // neonColor in shell.json, in which case that wins.
+  readonly property color autoNeon: root.setting("neonColor", "") === ""
+    ? Color.accent
+    : root.neonColor
+  readonly property color minimalNeon: Qt.lighter(Color.foreground, 1.2)
+  readonly property color effectiveNeon: root.minimalTheme
+    ? root.minimalNeon
+    : root.autoNeon
+
+  readonly property var cyberPalette: [
+    "#00e5ff", "#7df9ff", "#ff2d95", "#a855f7", "#00ffd5",
+    "#ff9d00", "#4d7cfe", "#ff4dd8", "#39ff14", "#00e5ff"
+  ]
+  readonly property var effectivePalette: root.cyberpunkTheme ? root.cyberPalette : []
+  readonly property real effectiveGlow: root.cyberpunkTheme
+    ? 1.0
+    : (root.minimalTheme ? 0.18 : 0.65)
 
   // Raises an existing YouTube Music window instead of piling up duplicate
   // tabs. The title must *end* with "YouTube Music" so a page merely
@@ -219,7 +246,9 @@ Panel {
     anchors.verticalCenter: parent.verticalCenter
     visible: root.showBarVisualizer
     levels: spectrum.levels
-    neon: root.neonColor
+    neon: root.effectiveNeon
+    colors: root.effectivePalette
+    glowStrength: root.effectiveGlow
     barCount: root.neonBarCount
   }
 
@@ -288,7 +317,7 @@ Panel {
             width: 6
             height: 6
             radius: 3
-            color: root.neonColor
+            color: root.effectiveNeon
             layer.enabled: true
             layer.samples: 4
             layer.effect: MultiEffect {
@@ -324,7 +353,7 @@ Panel {
             iconText: "\uf08e"
             tooltipText: "Open YouTube Music"
             foreground: root.dimForeground
-            hoverColor: root.neonColor
+            hoverColor: root.effectiveNeon
             fontFamily: root.contentFontFamily
             fontSize: Style.font.caption
             size: Style.space(22)
@@ -486,7 +515,9 @@ Panel {
           width: parent.width
           visible: root.showVisualizer && spectrum.levels.length > 0
           levels: spectrum.levels
-          neon: root.neonColor
+          neon: root.effectiveNeon
+          colors: root.effectivePalette
+          glowStrength: root.effectiveGlow
         }
 
         Column {
