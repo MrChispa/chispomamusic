@@ -3,7 +3,7 @@
   "id": "io.github.mrchispa.chispomamusic",
   "name": "ChispOmaMusic",
   "version": "2.0.0",
-  "author": "Haripako",
+  "author": "MrChispa",
   "license": "MIT",
   "description": "Control de YouTube Music por MPRIS para la barra de Omarchy con equalizador neón en la barra, temas, y volumen corregido para navegadores",
   "homepage": "https://github.com/MrChispa/chispomamusic",
