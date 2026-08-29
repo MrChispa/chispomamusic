@@ -76,6 +76,21 @@ Panel {
   readonly property color subtleBorder: Style.normalBorderFor(contentForeground, Color.accent)
   readonly property string contentFontFamily: bar ? bar.fontFamily : Style.font.family
 
+  // Shared spectrum source driving both the bar equalizer and the popup
+  // histogram. Active whenever playback is live and either visualizer wants
+  // data; Spectrum itself decides between real cava and the idle fallback.
+  //
+  // Declared BEFORE showBarVisualizer: QML property bindings that reference an
+  // id created later in the same component evaluate against a not-yet-existing
+  // object during construction and die, leaving the property permanently false
+  // (the bar slot then never grows to include the equalizer).
+  Spectrum {
+    id: spectrum
+    active: root.playing && (root.barVisualizer || (root.showVisualizer && root.opened))
+    barCount: root.neonBarCount
+    useCavaFallback: String(root.visualizerFallback).toLowerCase().indexOf("idle") !== -1
+  }
+
   // The bar equalizer shows whenever playback is live and the setting is on;
   // Spectrum owns the data, so "has signal" is the source's verdict.
   readonly property bool showBarVisualizer: root.playing && root.barVisualizer && spectrum.hasSignal
@@ -108,16 +123,6 @@ Panel {
   StreamVolume {
     id: streamVolume
     appHint: root.player ? root.player.identity : ""
-  }
-
-  // Shared spectrum source driving both the bar equalizer and the popup
-  // histogram. Active whenever playback is live and either visualizer wants
-  // data; Spectrum itself decides between real cava and the idle fallback.
-  Spectrum {
-    id: spectrum
-    active: root.playing && (root.barVisualizer || (root.showVisualizer && root.opened))
-    barCount: root.neonBarCount
-    useCavaFallback: String(root.visualizerFallback).toLowerCase().indexOf("idle") !== -1
   }
 
   // MPRIS can only talk to a player that already exists, so starting from an
