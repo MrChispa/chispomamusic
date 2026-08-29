@@ -22,6 +22,9 @@ Item {
   property bool active: false
   // Number of bars the equalizers draw (must match cava's `bars` config).
   property int barCount: 9
+  // cava refuses an odd bar count with stereo output, so the config always
+  // uses the nearest even number and the display adapts to whatever arrives.
+  readonly property int cavaBarCount: Math.max(2, 2 * Math.floor(root.barCount / 2))
   // Whether a synthetic idle animation may stand in when cava is absent.
   property bool useCavaFallback: true
 
@@ -68,7 +71,7 @@ Item {
     command: ["sh", "-c",
       "command -v cava >/dev/null 2>&1 || exit 127; " +
       "cfg=\"${XDG_RUNTIME_DIR:-/tmp}/omamusic-cava.conf\"; " +
-      "printf '%s\\n' '[general]' 'framerate = 30' 'bars = " + root.barCount + "' 'autosens = 1' " +
+      "printf '%s\\n' '[general]' 'framerate = 30' 'bars = " + root.cavaBarCount + "' 'autosens = 1' " +
       "'[smoothing]' 'noise_reduction = 40' " +
       "'[output]' 'method = raw' 'raw_target = /dev/stdout' 'data_format = ascii' " +
       "'ascii_max_range = 100' 'bar_delimiter = 59' 'frame_delimiter = 10' > \"$cfg\"; " +

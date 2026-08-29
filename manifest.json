@@ -7,7 +7,9 @@
   "license": "MIT",
   "description": "YouTube Music MPRIS controller with a neon equalizer in the bar, album art, seekable progress bar, shuffle/repeat, and volume in a popup panel",
   "homepage": "https://github.com/MrChispa/omamusic",
-  "kinds": ["bar-widget"],
+  "kinds": [
+    "bar-widget"
+  ],
   "entryPoints": {
     "barWidget": "Panel.qml"
   },
@@ -29,7 +31,7 @@
       "quickLinkBehavior": "Focus if open",
       "barVisualizer": true,
       "neonColor": "#00e5ff",
-      "neonBarCount": 9,
+      "neonBarCount": 10,
       "visualizerFallback": "Idle animation"
     },
     "schema": [
@@ -37,7 +39,11 @@
         "key": "playerSource",
         "type": "enum",
         "label": "Player source",
-        "options": ["Auto", "Native app", "Browser"],
+        "options": [
+          "Auto",
+          "Native app",
+          "Browser"
+        ],
         "defaultValue": "Auto",
         "description": "Where playback is controlled. Auto prefers a native client and falls back to the browser. Native app gives volume, shuffle and repeat; Browser needs no install and uses its PipeWire stream for volume."
       },
@@ -87,7 +93,10 @@
         "key": "quickLinkBehavior",
         "type": "enum",
         "label": "Quick link behaviour",
-        "options": ["Focus if open", "Always open"],
+        "options": [
+          "Focus if open",
+          "Always open"
+        ],
         "defaultValue": "Focus if open",
         "description": "Focus if open raises an existing YouTube Music window instead of stacking duplicate tabs; Always open navigates to the link every time (Hyprland only)."
       },
@@ -117,12 +126,15 @@
         "type": "number",
         "label": "Neon bar count",
         "description": "Number of bars in the neon equalizer",
-        "defaultValue": 9
+        "defaultValue": 10
       },
       {
         "key": "visualizerFallback",
         "type": "enum",
-        "options": ["Idle animation", "Nothing"],
+        "options": [
+          "Idle animation",
+          "Nothing"
+        ],
         "label": "Without cava",
         "description": "What the equalizer shows when cava is not installed: a decorative idle animation, or nothing",
         "defaultValue": "Idle animation"
