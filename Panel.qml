@@ -9,8 +9,8 @@ import "Model.js" as Model
 
 Panel {
   id: root
-  moduleName: "io.github.haripako.omamusic"
-  ipcTarget: "io.github.haripako.omamusic"
+  moduleName: "io.github.mrchispa.chispomamusic"
+  ipcTarget: "io.github.mrchispa.chispomamusic"
 
   readonly property string playerSource: root.setting("playerSource", "Auto")
   readonly property bool strictBrowserMatch: root.setting("strictBrowserMatch", false)
@@ -214,7 +214,7 @@ Panel {
     for (var k in s) updated[k] = s[k]
     updated.neonTheme = next
     root.settings = updated
-    Util.execDetached("omarchy bar set io.github.haripako.omamusic neonTheme " + next)
+    Util.execDetached("omarchy bar set io.github.mrchispa.chispomamusic neonTheme " + next)
   }
 
   BarIconButton {

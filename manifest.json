@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "io.github.haripako.omamusic",
-  "name": "Omamusic",
+  "id": "io.github.mrchispa.chispomamusic",
+  "name": "ChispOmaMusic",
   "version": "2.0.0",
   "author": "Haripako",
   "license": "MIT",
-  "description": "YouTube Music MPRIS controller with a neon equalizer in the bar, album art, seekable progress bar, shuffle/repeat, and volume in a popup panel",
-  "homepage": "https://github.com/MrChispa/omamusic",
+  "description": "Control de YouTube Music por MPRIS para la barra de Omarchy con equalizador neón en la barra, temas, y volumen corregido para navegadores",
+  "homepage": "https://github.com/MrChispa/chispomamusic",
   "kinds": [
     "bar-widget"
   ],
@@ -14,8 +14,8 @@
     "barWidget": "Panel.qml"
   },
   "barWidget": {
-    "displayName": "Omamusic",
-    "description": "YouTube Music controller with album art, progress bar, and playback controls",
+    "displayName": "ChispOmaMusic",
+    "description": "Control de YouTube Music con carátula, barra de progreso, controles de reproducción, volumen, enlaces rápidos y equalizador neón",
     "category": "Media",
     "allowMultiple": false,
     "defaultSection": "center",
@@ -39,94 +39,94 @@
       {
         "key": "playerSource",
         "type": "enum",
-        "label": "Player source",
+        "label": "Fuente del reproductor",
         "options": [
           "Auto",
           "Native app",
           "Browser"
         ],
         "defaultValue": "Auto",
-        "description": "Where playback is controlled. Auto prefers a native client and falls back to the browser. Native app gives volume, shuffle and repeat; Browser needs no install and uses its PipeWire stream for volume."
+        "description": "Dónde se controla la reproducción. Auto prefiere un cliente nativo y cae al navegador. Nativo da volumen, aleatorio y repetir; Navegador no necesita instalación y usa su stream de PipeWire para el volumen."
       },
       {
         "key": "strictBrowserMatch",
         "type": "boolean",
-        "label": "Strict browser match",
-        "description": "Only adopt a browser session while a window titled \"YouTube Music\" is open. More precise, but goes idle if that window switches to another tab (Hyprland only)",
+        "label": "Coincidencia estricta de navegador",
+        "description": "Solo adoptar una sesión de navegador mientras haya una ventana titulada \"YouTube Music\" abierta. Más preciso, pero queda inactivo si esa ventana cambia de pestaña (solo Hyprland)",
         "defaultValue": false
       },
       {
         "key": "extraPlayerNames",
         "type": "string",
-        "label": "Extra player names",
-        "description": "Comma-separated MPRIS identities or desktop entries to treat as YouTube Music",
+        "label": "Nombres de reproductores extra",
+        "description": "Identidades o entradas de escritorio MPRIS separadas por comas para tratar también como YouTube Music",
         "defaultValue": ""
       },
       {
         "key": "showVolume",
         "type": "boolean",
-        "label": "Show volume slider",
-        "description": "Display a volume slider when the player supports it",
+        "label": "Mostrar slider de volumen",
+        "description": "Mostrar un slider de volumen cuando el reproductor lo soporta",
         "defaultValue": true
       },
       {
         "key": "scrollVolume",
         "type": "boolean",
-        "label": "Scroll to change volume",
-        "description": "Adjust volume by scrolling over the bar icon",
+        "label": "Rueda para cambiar volumen",
+        "description": "Ajustar el volumen con la rueda sobre el icono de la barra",
         "defaultValue": true
       },
       {
         "key": "showVisualizer",
         "type": "boolean",
-        "label": "Show spectrum visualizer",
-        "description": "Draw a live audio histogram while playing (requires cava; reflects system audio)",
+        "label": "Mostrar visualizador de espectro",
+        "description": "Dibujar un histograma de audio en vivo mientras suena (requiere cava; refleja el audio del sistema)",
         "defaultValue": true
       },
       {
         "key": "quickLinks",
         "type": "string",
-        "label": "Quick links",
-        "description": "Playlist shortcuts shown in the popup, as \"Name|URL\" separated by commas. MPRIS cannot switch playlists, so these open the playlist in your browser instead.",
+        "label": "Enlaces rápidos",
+        "description": "Accesos directos a playlists mostrados en el panel, como \"Nombre|URL\" separados por comas. MPRIS no puede cambiar de playlist, así que estos abren la playlist en tu navegador.",
         "defaultValue": "Liked songs|https://music.youtube.com/playlist?list=LM, Library|https://music.youtube.com/library"
       },
       {
         "key": "quickLinkBehavior",
         "type": "enum",
-        "label": "Quick link behaviour",
+        "label": "Comportamiento del enlace rápido",
         "options": [
           "Focus if open",
           "Always open"
         ],
         "defaultValue": "Focus if open",
-        "description": "Focus if open raises an existing YouTube Music window instead of stacking duplicate tabs; Always open navigates to the link every time (Hyprland only)."
+        "description": "Focus if open eleva una ventana existente de YouTube Music en lugar de apilar pestañas duplicadas; Always open navega al enlace cada vez (solo Hyprland)."
       },
       {
         "key": "launchCommand",
         "type": "string",
-        "label": "Launch command",
-        "description": "Command run by the play button when nothing is playing. Empty uses the native client if installed, otherwise music.youtube.com",
+        "label": "Comando de lanzamiento",
+        "description": "Comando ejecutado por el botón de play cuando no suena nada. Vacío usa el cliente nativo si está instalado, si no music.youtube.com",
         "defaultValue": ""
       },
       {
         "key": "barVisualizer",
         "type": "boolean",
-        "label": "Bar neon equalizer",
-        "description": "Show a neon equalizer in the bar while music is playing",
+        "label": "Equalizador neón en la barra",
+        "description": "Mostrar un equalizador neón en la barra mientras suena música",
         "defaultValue": true
       },
       {
         "key": "neonColor",
         "type": "string",
-        "label": "Neon color",
-        "description": "Hex color of the neon equalizer glow",
+        "label": "Color neón",
+        "description": "Color hex del resplandor del equalizador; si se fija, gana sobre el accent en el tema Auto",
         "defaultValue": "#00e5ff"
       },
       {
         "key": "neonBarCount",
         "type": "number",
-        "label": "Neon bar count",
-        "description": "Number of bars in the neon equalizer",
+        "label": "Número de barras neón",
+        "description": "Cantidad de barras del equalizador neón",
         "defaultValue": 10
       },
       {
@@ -136,21 +136,21 @@
           "Idle animation",
           "Nothing"
         ],
-        "label": "Without cava",
-        "description": "What the equalizer shows when cava is not installed: a decorative idle animation, or nothing",
+        "label": "Sin cava",
+        "description": "Qué muestra el equalizador cuando cava no está instalado: una animación decorativa, o nada",
         "defaultValue": "Idle animation"
       },
       {
         "key": "neonTheme",
         "type": "enum",
-        "label": "Equalizer theme",
+        "label": "Tema del equalizador",
         "options": [
           "Auto",
           "Cyberpunk",
           "Minimalist"
         ],
         "defaultValue": "Auto",
-        "description": "Auto follows the active theme accent. Cyberpunk uses a multi-color neon palette with a strong glow. Minimalist uses a soft neutral glow."
+        "description": "Auto sigue el accent del tema activo. Cyberpunk usa una paleta neón multicolor con resplandor intenso. Minimalist usa un resplandor neutro suave."
       }
     ]
   }
