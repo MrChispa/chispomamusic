@@ -65,7 +65,7 @@ Item {
           height: root.implicitHeight
 
           readonly property real level: index < root.levels.length ? (root.levels[index] || 0) : 0
-          readonly property real coreHeight: Math.max(root.minBarHeight, root.level * root.implicitHeight)
+          readonly property real coreHeight: Math.max(root.minBarHeight, level * root.implicitHeight)
 
           // Glow layer behind the core bar.
           Rectangle {
@@ -73,7 +73,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             width: root.barWidth * 2.2
-            height: Math.max(root.minBarHeight, root.coreHeight * 1.5)
+            height: Math.max(root.minBarHeight, coreHeight * 1.5)
             radius: width / 2
             color: root.neon
             opacity: 0.28
@@ -96,7 +96,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             width: root.barWidth
-            height: root.coreHeight
+            height: coreHeight
             radius: width / 2
             gradient: Gradient {
               GradientStop { position: 0.0; color: Qt.lighter(root.neon, 1.35) }
