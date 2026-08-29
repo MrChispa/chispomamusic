@@ -197,14 +197,14 @@ Panel {
     }
   }
 
-  // Neon equalizer beside the icon. Pure rendering and click-through: `enabled`
-  // stays false so the button above remains the click target for the popup.
+  // Neon equalizer beside the icon. Pure rendering and click-through: it has
+  // no MouseArea of its own, so the button above remains the click target for
+  // the popup and no input ever reaches the bars.
   BarVisualizer {
     id: barVisualizerRow
     anchors.left: button.right
     anchors.leftMargin: Style.space(3)
     anchors.verticalCenter: parent.verticalCenter
-    enabled: false
     visible: root.showBarVisualizer
     levels: spectrum.levels
     neon: root.neonColor
